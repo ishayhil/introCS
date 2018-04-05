@@ -22,6 +22,7 @@ public class Date {
     private final int MAX_DAY = 31;
     private final int MIN_DAY = 1;
     private final int VALID_YEAR_DIGIT_LEN = 4;
+    private final int MAX_DAY_FEB = 29;
 
     // public constructors: //
     public Date() {
@@ -168,7 +169,7 @@ public class Date {
      * @return int. the day in the week.
      */
     public int dayInWeek() {
-        int indexMonth = calculateMonthIndex(int_month);
+        int indexMonth = monthForDayInWeek(int_month);
         int indexYear = yearForDayInWeek(int_year, indexMonth);
         int c = indexYear / 100;
         int y = indexYear % 100;
@@ -190,7 +191,7 @@ public class Date {
 
 
     // private methods: //
-    private boolean leap(int year) {
+    private boolean leap(int year) { // check if the year is a leap year.
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
 
@@ -207,10 +208,10 @@ public class Date {
     }
 
     private boolean isValidFeb(int day, int month, int year) {
-        return (month != 2 || day < 29 || (leap(year) && day < 30));
+        return (month != 2 || day < MAX_DAY_FEB || (leap(year) && day < 30));
     }
 
-    private boolean isValid31DaysMonth(int month, int day) {
+    private boolean isValid31DaysMonth(int month, int day) { // checks if the month has 31 days.
         return (day != MAX_DAY || (month != 4 && month != 6 && month != 9 && month != 11));
     }
 
@@ -225,7 +226,7 @@ public class Date {
         int_year = DEFAULT_YEAR;
     }
 
-    private int calculateDate(int day, int month, int year) {
+    private int calculateDate(int day, int month, int year) { // calculates the amount of days passed for each date.
         if (month < 3) {
             --year;
             month = month + 12;
@@ -233,7 +234,7 @@ public class Date {
         return 365 * year + year / 4 - year / 100 + year / 400 + ((month + 1) * 306) / 10 + (day - 62);
     }
 
-    private int calculateMonthIndex(int month) {
+    private int monthForDayInWeek(int month) { // returns the right month for the dayInWeek calculation.
         switch (month) {
             case 1:
                 return 13;
@@ -244,7 +245,7 @@ public class Date {
         }
     }
 
-    private int yearForDayInWeek(int year, int monthIndex) {
+    private int yearForDayInWeek(int year, int monthIndex) { // returns the right year for the dayInWeek calculation.
         return monthIndex > MAX_MONTH ? --year : year;
     }
 
