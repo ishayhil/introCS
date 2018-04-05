@@ -1,7 +1,7 @@
 /**
  * Temperature class will convert between C, F & K degrees units of measure by the inputs given by the user (temp unit and value).
  *
- * @author Ishay Hilzenrat. ID: 313534398
+ * @author Ishay Hilzenrat. 
  * @version 1.0
  */
 

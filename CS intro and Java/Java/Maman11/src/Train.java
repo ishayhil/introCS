@@ -2,7 +2,7 @@
  * The Train class will calculate the final distance between two different trains given the km/h speed and the travel
  * duration (in minutes) of each of these trains.
  *
- * @author Ishay Hilzenrat. ID: 313534398
+ * @author Ishay Hilzenrat. 
  * @version 1.0
  */
 

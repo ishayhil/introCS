@@ -2,7 +2,7 @@
  * Date class stores / copies valid dates (above year 999). The class contains many methods to compare one date to
  * another.
  *
- * @author Ishay Hilzenrat. ID: 313534398
+ * @author Ishay Hilzenrat.
  * @version 1.0
  */
 

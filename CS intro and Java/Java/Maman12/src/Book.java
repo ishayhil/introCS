@@ -2,7 +2,7 @@
  * Book class stores / copies books. The class contains method to borrow/return a book from the library, check book's status
  * and compare one book to another.
  *
- * @author Ishay Hilzenrat. ID: 313534398
+ * @author Ishay Hilzenrat.
  * @version 1.0
  */
 
