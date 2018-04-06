@@ -307,13 +307,14 @@ public class Book {
      * @return int. the penalty in ILS.
      */
     public int computePenalty(Date returnDate) {
+        int numberOfDaysBorrowed = howLongBorrowed(returnDate);
         if (!_borrowed || !isLateOnReturn(returnDate)) { // if book isn't borrowed or book isn't late.
             return 0;
-        } else if (returnDate.difference(_borrowedDate) <= MAX_DAYS * 2) { // if below or equal to 60 days.
-            return (returnDate.difference(_borrowedDate) - MAX_DAYS) * ONE_DAY_FINE;
+        } else if (numberOfDaysBorrowed <= MAX_DAYS * 2) { // if below or equal to 60 days.
+            return (numberOfDaysBorrowed - MAX_DAYS) * ONE_DAY_FINE;
         }
 
-        return (returnDate.difference(_borrowedDate) - MAX_DAYS) * (2 * ONE_DAY_FINE); // if above 60 days.
+        return (MAX_DAYS * ONE_DAY_FINE) + ((numberOfDaysBorrowed - (MAX_DAYS * 2)) * ONE_DAY_FINE * 2); // if above 60 days.
     }
 
 
