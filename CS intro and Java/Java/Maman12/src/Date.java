@@ -21,8 +21,18 @@ public class Date {
     private final int MIN_MONTH = 1;
     private final int MAX_DAY = 31;
     private final int MIN_DAY = 1;
+    private final int MIN_YEAR = 0;
     private final int VALID_YEAR_DIGIT_LEN = 4;
     private final int MAX_DAY_FEB = 29;
+    private final int MIN_DAY_IN_WEEK = 0;
+
+    private final int JAN = 1;
+    private final int FEB = 2;
+    private final int MARCH = 3;
+    private final int APRIL = 4;
+    private final int JUNE = 6;
+    private final int SEP = 9;
+    private final int NOV = 11;
 
     // public constructors: //
     public Date() {
@@ -169,14 +179,21 @@ public class Date {
      * @return int. the day in the week.
      */
     public int dayInWeek() {
+        final int _26 = 26;
+        final int _1 = 1;
+        final int _10 = 10;
+        final int _4 = 4;
+        final int _2 = 2;
+        final int NUM_DAYS_IN_WEEK = 7;
+
         int indexMonth = monthForDayInWeek(int_month);
         int indexYear = yearForDayInWeek(int_year, indexMonth);
         int c = indexYear / 100;
         int y = indexYear % 100;
 
-        int dayOfWeek = (int_day + (26 * (indexMonth + 1)) / 10 + y + y / 4 + c / 4 - 2 * c) % 7;
+        int dayOfWeek = (int_day + (_26 * (indexMonth + _1)) / _10 + y + y / _4 + c / _4 - _2 * c) % NUM_DAYS_IN_WEEK;
 
-        return dayOfWeek >= 0 ? dayOfWeek : Math.floorMod(dayOfWeek, 7);
+        return dayOfWeek >= MIN_DAY_IN_WEEK ? dayOfWeek : Math.floorMod(dayOfWeek, 7);
     }
 
     /**
@@ -192,7 +209,12 @@ public class Date {
 
     // private methods: //
     private boolean leap(int year) { // check if the year is a leap year.
-        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+        final int _4 = 4;
+        final int _0 = 0;
+        final int _100 = 100;
+        final int _400 = 400;
+
+        return (year % _4 == _0 && year % _100 != _0) || (year % _400 == _0);
     }
 
     private boolean isValidDay(int day) {
@@ -204,15 +226,15 @@ public class Date {
     }
 
     private boolean isValidYear(int year) {
-        return (year > 0 && Integer.toString(year).length() == VALID_YEAR_DIGIT_LEN);
+        return (year > MIN_YEAR && Integer.toString(year).length() == VALID_YEAR_DIGIT_LEN);
     }
 
     private boolean isValidFeb(int day, int month, int year) {
-        return (month != 2 || day < MAX_DAY_FEB || (leap(year) && day < 30));
+        return (month != FEB || day < MAX_DAY_FEB || leap(year) && day <= MAX_DAY_FEB);
     }
 
     private boolean isValid31DaysMonth(int month, int day) { // checks if the month has 31 days.
-        return (day != MAX_DAY || (month != 4 && month != 6 && month != 9 && month != 11));
+        return (day != MAX_DAY || (month != APRIL && month != JUNE && month != SEP && month != NOV));
     }
 
     private boolean isValidDate(int day, int month, int year) {
@@ -227,19 +249,32 @@ public class Date {
     }
 
     private int calculateDate(int day, int month, int year) { // calculates the amount of days passed for each date.
-        if (month < 3) {
+        final int DAYS_IN_REGULAR_YEAR = 365;
+        final int _4 = 4;
+        final int _100 = 100;
+        final int _400 = 400;
+        final int _306 = 306;
+        final int _10 = 10;
+        final int _62 = 62;
+        final int _1 = 1;
+
+        if (month < MARCH) {
             --year;
-            month = month + 12;
+            month = month + MAX_MONTH;
         }
-        return 365 * year + year / 4 - year / 100 + year / 400 + ((month + 1) * 306) / 10 + (day - 62);
+        return DAYS_IN_REGULAR_YEAR * year + year / _4 - year / _100 + year / _400 + ((month + _1) * _306) /
+                _10 + (day - _62);
     }
 
     private int monthForDayInWeek(int month) { // returns the right month for the dayInWeek calculation.
+        final int INDEXED_JAN = 13;
+        final int INDEXED_FEB = 14;
+
         switch (month) {
-            case 1:
-                return 13;
-            case 2:
-                return 14;
+            case JAN:
+                return INDEXED_JAN;
+            case FEB:
+                return INDEXED_FEB;
             default:
                 return month;
         }
@@ -260,4 +295,4 @@ public class Date {
         return currentDateCount - otherDateCount;
     }
 
-} // end of class Date
+}

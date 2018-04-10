@@ -16,12 +16,16 @@ public class Book {
 
     // final values:
     private final int MAX_DAYS = 30;
+    private final int DOUBLE_MAX_DAYS = 60;
     private final int ONE_DAY_FINE = 5;
+    private final int DOUBLE_ONE_DAY_FINE = 2 * ONE_DAY_FINE;
     private final int MIN_YEAR = 1800;
     private final int MAX_YEAR = 2018;
     private final int DEFAULT_YEAR = 2000;
     private final int DEFAULT_PAGE_COUNT = 1;
     private final int MIN_PAGE_COUNT = 0;
+    private final int FRIDAY = 6;
+    private final int SATURDAY = 0;
 
 
     // public constructors: //
@@ -296,7 +300,7 @@ public class Book {
      * @return boolean. the book is available today or not.
      */
     public boolean isAvailable(Date todayDate) {
-        return (!_borrowed && todayDate.dayInWeek() != 0 && todayDate.dayInWeek() != 6);
+        return (!_borrowed && todayDate.dayInWeek() != FRIDAY && todayDate.dayInWeek() != SATURDAY);
     }
 
     /**
@@ -310,11 +314,11 @@ public class Book {
         int numberOfDaysBorrowed = howLongBorrowed(returnDate);
         if (!_borrowed || !isLateOnReturn(returnDate)) { // if book isn't borrowed or book isn't late.
             return 0;
-        } else if (numberOfDaysBorrowed <= MAX_DAYS * 2) { // if below or equal to 60 days.
+        } else if (numberOfDaysBorrowed <= DOUBLE_MAX_DAYS) { // if below or equal to 60 days.
             return (numberOfDaysBorrowed - MAX_DAYS) * ONE_DAY_FINE;
         }
 
-        return (MAX_DAYS * ONE_DAY_FINE) + ((numberOfDaysBorrowed - (MAX_DAYS * 2)) * ONE_DAY_FINE * 2); // if above 60 days.
+        return (MAX_DAYS * ONE_DAY_FINE) + ((numberOfDaysBorrowed - DOUBLE_MAX_DAYS) * DOUBLE_ONE_DAY_FINE); // if above 60 days.
     }
 
 
