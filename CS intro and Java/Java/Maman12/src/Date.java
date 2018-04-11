@@ -35,9 +35,6 @@ public class Date {
     private final int NOV = 11;
 
     // public constructors: //
-    public Date() {
-        setDefaultDate();
-    }
 
     /**
      * Date constructor. Will make Date object by a given a date, month and year.
