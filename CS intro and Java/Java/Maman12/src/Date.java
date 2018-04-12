@@ -34,6 +34,24 @@ public class Date {
     private final int SEP = 9;
     private final int NOV = 11;
 
+    private final int INDEXED_JAN = 13;
+    private final int INDEXED_FEB = 14;
+
+    // calculateDate and leap methods constants:
+    private final int DAYS_IN_REGULAR_YEAR = 365;
+    private final int NUM_DAYS_IN_WEEK = 7;
+    private final int _4 = 4;
+    private final int _100 = 100;
+    private final int _400 = 400;
+    private final int _306 = 306;
+    private final int _10 = 10;
+    private final int _62 = 62;
+    private final int _1 = 1;
+    private final int _0 = 0;
+    private final int _2 = 2;
+    private final int _26 = 26;
+
+
     // public constructors: //
 
     /**
@@ -176,12 +194,6 @@ public class Date {
      * @return int. the day in the week.
      */
     public int dayInWeek() {
-        final int _26 = 26;
-        final int _1 = 1;
-        final int _10 = 10;
-        final int _4 = 4;
-        final int _2 = 2;
-        final int NUM_DAYS_IN_WEEK = 7;
 
         int indexMonth = monthForDayInWeek(int_month);
         int indexYear = yearForDayInWeek(int_year, indexMonth);
@@ -206,11 +218,6 @@ public class Date {
 
     // private methods: //
     private boolean leap(int year) { // check if the year is a leap year.
-        final int _4 = 4;
-        final int _0 = 0;
-        final int _100 = 100;
-        final int _400 = 400;
-
         return (year % _4 == _0 && year % _100 != _0) || (year % _400 == _0);
     }
 
@@ -246,15 +253,6 @@ public class Date {
     }
 
     private int calculateDate(int day, int month, int year) { // calculates the amount of days passed for each date.
-        final int DAYS_IN_REGULAR_YEAR = 365;
-        final int _4 = 4;
-        final int _100 = 100;
-        final int _400 = 400;
-        final int _306 = 306;
-        final int _10 = 10;
-        final int _62 = 62;
-        final int _1 = 1;
-
         if (month < MARCH) {
             --year;
             month = month + MAX_MONTH;
@@ -264,9 +262,6 @@ public class Date {
     }
 
     private int monthForDayInWeek(int month) { // returns the right month for the dayInWeek calculation.
-        final int INDEXED_JAN = 13;
-        final int INDEXED_FEB = 14;
-
         switch (month) {
             case JAN:
                 return INDEXED_JAN;

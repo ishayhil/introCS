@@ -353,4 +353,4 @@ public class Book {
         return otherDate == null ? null : new Date(otherDate);
     }
 
-} // end of class Book
+}
