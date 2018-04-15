@@ -38,9 +38,10 @@ public class Library {
     public int howManyBooksBorrowed() {
         int numB = 0;
         for (Book book : _lib) {
-            if (!isNull(book) && book.getBorrowed()) {
+            if (isNull(book))
+                return numB;
+            else if (book.getBorrowed())
                 ++numB;
-            }
         }
         return numB;
     }
@@ -48,7 +49,9 @@ public class Library {
     public int howManyBorrowedAtDate(Date d) {
         int numB = 0;
         for (Book book : _lib) {
-            if (!isNull(book) && !isNull(d) && d.equals(book.getBorrowedDate()))
+            if (isNull(d) || isNull(book))
+                return numB;
+            else if (d.equals(book.getBorrowedDate()))
                 ++numB;
         }
         return numB;
@@ -57,14 +60,16 @@ public class Library {
     public int howManyBorrowedToStudent(String studentName) {
         int numB = 0;
         for (Book book : _lib) {
-            if (!isNull(book) && !isNull(studentName) && studentName.equalsIgnoreCase(book.getStudentName()))
+            if (isNull(book) || isNull(studentName))
+                return numB;
+            else if (studentName.equalsIgnoreCase(book.getStudentName()))
                 ++numB;
         }
         return numB;
     }
 
     public String mostPopularAuthor() {
-        if (isNull(_lib[0]))
+        if (isNull(_lib[0])) // first one is null -> all is null.
             return null;
 
         String mostPop = _lib[0].getAuthor();
@@ -72,7 +77,7 @@ public class Library {
 
         for (Book book : _lib) {
             if (isNull(book)) // due to the fact that there are not null between two books, once reached null; break loop.
-                break;
+                return mostPop;
 
             String currentAuthor = book.getAuthor();
             int currentAuthorCount = 0;
@@ -80,11 +85,9 @@ public class Library {
             for (Book book2 : _lib) {
                 if (isNull(book2))
                     break;
-
-                if (book2.getAuthor().equals(currentAuthor))
+                else if (book2.getAuthor().equals(currentAuthor))
                     ++currentAuthorCount;
             }
-
             if (mostPopCount < currentAuthorCount) {
                 mostPop = currentAuthor;
                 mostPopCount = currentAuthorCount;
@@ -94,16 +97,15 @@ public class Library {
     }
 
     public Book oldestBook() {
-        if (isNull(_lib[0]))
+        if (isNull(_lib[0])) // first one is null -> all is null.
             return null;
 
         Book oldest = new Book(_lib[0]);
 
         for (Book book : _lib) {
             if (isNull(book)) // due to the fact that there are not null between two books, once reached null; break loop.
-                break;
-
-            if (book.getYear() < oldest.getYear())
+                return new Book(oldest);
+            else if (book.getYear() < oldest.getYear())
                 oldest = new Book(book);
         }
         return new Book(oldest);
@@ -134,7 +136,7 @@ public class Library {
         return str == null;
     }
 
-    private void sortArray() {
+    private void sortArray() { // appending the non null books into the temp array.
         Book[] temp = new Book[MAX_BOOKS];
         int j = 0; // temp index starting
         for (Book book : _lib) {
