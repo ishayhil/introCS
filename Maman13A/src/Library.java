@@ -152,7 +152,6 @@ public class Library {
             return null;
 
         String[] authors = copyAuthors(lib);
-        Arrays.sort(authors);
 
         int currentBatchCnt = 0;
         String currentBatch = authors[0];
