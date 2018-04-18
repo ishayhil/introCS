@@ -1,6 +1,9 @@
+import java.util.Arrays;
+
 /**
  * Created by ishayhilzenrat on 14/04/2018.
  */
+
 public class Library {
     private final int MAX_BOOKS = 200;
 
@@ -32,7 +35,7 @@ public class Library {
                 }
             }
         }
-        sortArray();
+        arrangeArray();
     }
 
     public int howManyBooksBorrowed() {
@@ -46,12 +49,12 @@ public class Library {
         return numB;
     }
 
-    public int howManyBorrowedAtDate(Date d) {
+    public int howManyBorrowedAtDate(Date date) {
         int numB = 0;
         for (Book book : _lib) {
-            if (isNull(d) || isNull(book))
+            if (isNull(date) || isNull(book))
                 return numB;
-            else if (d.equals(book.getBorrowedDate()))
+            if (date.equals(book.getBorrowedDate()))
                 ++numB;
         }
         return numB;
@@ -62,38 +65,14 @@ public class Library {
         for (Book book : _lib) {
             if (isNull(book) || isNull(studentName))
                 return numB;
-            else if (studentName.equalsIgnoreCase(book.getStudentName()))
+            if (studentName.equalsIgnoreCase(book.getStudentName()))
                 ++numB;
         }
         return numB;
     }
 
     public String mostPopularAuthor() {
-        if (isNull(_lib[0])) // first one is null -> all is null.
-            return null;
-
-        String mostPop = _lib[0].getAuthor();
-        int mostPopCount = 0;
-
-        for (Book book : _lib) {
-            if (isNull(book)) // due to the fact that there are not null between two books, once reached null; break loop.
-                return mostPop;
-
-            String currentAuthor = book.getAuthor();
-            int currentAuthorCount = 0;
-
-            for (Book book2 : _lib) {
-                if (isNull(book2))
-                    break;
-                else if (book2.getAuthor().equals(currentAuthor))
-                    ++currentAuthorCount;
-            }
-            if (mostPopCount < currentAuthorCount) {
-                mostPop = currentAuthor;
-                mostPopCount = currentAuthorCount;
-            }
-        }
-        return mostPop;
+        return longestSequence(_lib);
     }
 
     public Book oldestBook() {
@@ -105,20 +84,21 @@ public class Library {
         for (Book book : _lib) {
             if (isNull(book)) // due to the fact that there are not null between two books, once reached null; break loop.
                 return new Book(oldest);
-            else if (book.getYear() < oldest.getYear())
+            if (book.getYear() < oldest.getYear())
                 oldest = new Book(book);
         }
         return new Book(oldest);
     }
 
     public String toString() {
-        String books = "";
+        StringBuilder books = new StringBuilder();
 
-        for (Book book : _lib)
+        for (Book book : _lib) {
             if (!isNull(book))
-                books += (book + "\n");
+                books.append(book).append("\n");
+        }
 
-        return books;
+        return books.toString();
     }
 
 
@@ -136,7 +116,7 @@ public class Library {
         return str == null;
     }
 
-    private void sortArray() { // appending the non null books into the temp array.
+    private void arrangeArray() { // appending the non null books into the temp array.
         Book[] temp = new Book[MAX_BOOKS];
         int j = 0; // temp index starting
         for (Book book : _lib) {
@@ -147,5 +127,55 @@ public class Library {
         }
         _lib = temp;
     }
+
+
+    /*
+    making a new String array of authors. empty String instead of null so they could be sorted.
+    sort - O(nlog(n)).
+    building new array - O(n).
+    total - O(nlog(n) + n).
+     */
+    private String[] copyAuthors(Book[] lib) {
+        String[] authors = new String[MAX_BOOKS];
+        for (int i = 0; i < authors.length; i++) {
+            if (isNull(lib[i]))
+                authors[i] = "";
+            else
+                authors[i] = lib[i].getAuthor();
+        }
+        Arrays.sort(authors);
+        return authors;
+    }
+
+    private String longestSequence(Book[] lib) { // returning the longest "batch" after sorted. O(nlogn(n) + 2n).
+        if (isNull(lib[0]))
+            return null;
+
+        String[] authors = copyAuthors(lib);
+        Arrays.sort(authors);
+
+        int currentBatchCnt = 0;
+        String currentBatch = authors[0];
+        int longestCnt = 0;
+        String longest = authors[0];
+
+        for (Book book : lib) { // O(n)
+            if (isNull(book))
+                return longest;
+
+            currentBatchCnt++;
+            if (book.getAuthor().equals(longest)) {
+                longestCnt++;
+            } else if (!book.getAuthor().equals(currentBatch)) {
+                currentBatchCnt = 1;
+            } else if (currentBatchCnt > longestCnt) {
+                longestCnt = currentBatchCnt;
+                longest = book.getAuthor();
+            }
+            currentBatch = book.getAuthor();
+        }
+        return longest;
+    }
+
 
 }
