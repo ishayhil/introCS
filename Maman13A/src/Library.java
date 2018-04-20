@@ -1,8 +1,12 @@
-import java.util.Arrays;
-
 /**
- * Created by ishayhilzenrat on 14/04/2018.
+ * Library class stores array of 200 Books (max books allowed). Contains methods to add, remove and analyze the library's
+ * content.
+ *
+ * @author Ishay Hilzenrat.
+ * @version 1.0
  */
+
+import java.util.Arrays;
 
 public class Library {
     private final int MAX_BOOKS = 200;
