@@ -10,22 +10,37 @@ public class Library {
     private Book[] _lib = new Book[MAX_BOOKS];
     private int _noOfBooks = 0;
 
+    /**
+     * Library class public constructor. Creates object with array of 200 Books (all null to begin with).
+     */
     public Library() {
     }
 
+    /**
+     * Adds a new book to the Book array.
+     *
+     * @param book other Book to add to the Book array.
+     * @return true if the book was added. false if wasn't added.
+     */
     public boolean addBook(Book book) {
-        if (!isNull(book)) {
-            for (int i = 0; i < _lib.length; i++) {
-                if (isNull(_lib[i])) {
-                    _lib[i] = new Book(book);
-                    _noOfBooks++;
-                    return true;
-                }
+        if (isNull(book))
+            return false;
+
+        for (int i = 0; i < _lib.length; i++) {
+            if (isNull(_lib[i])) {
+                _lib[i] = new Book(book);
+                _noOfBooks++;
+                return true;
             }
         }
         return false;
     }
 
+    /**
+     * removes a given book from the Book array. after, arranges so there won't be any 'gaps' inside of it (nulls at the end).
+     *
+     * @param book other Book to add.
+     */
     public void removeBook(Book book) {
         if (!isNull(book)) {
             for (int i = 0; i < _lib.length; i++) {
@@ -38,6 +53,11 @@ public class Library {
         arrangeArray();
     }
 
+    /**
+     * returns the number of book in the Book array that are borrowed at the moment.
+     *
+     * @return int. number for borrowed books.
+     */
     public int howManyBooksBorrowed() {
         int numB = 0;
         for (Book book : _lib) {
@@ -49,6 +69,12 @@ public class Library {
         return numB;
     }
 
+    /**
+     * returns the number of book in the Book array that are borrowed at a specific date.
+     *
+     * @param date date of borrow to search upon.
+     * @return int. number for borrowed books at the given date.
+     */
     public int howManyBorrowedAtDate(Date date) {
         int numB = 0;
         for (Book book : _lib) {
@@ -60,6 +86,12 @@ public class Library {
         return numB;
     }
 
+    /**
+     * returns the number of book in the Book array that are borrowed to a specific student.
+     *
+     * @param studentName name of student to search upon.
+     * @return int. number for borrowed books at the given student.
+     */
     public int howManyBorrowedToStudent(String studentName) {
         int numB = 0;
         for (Book book : _lib) {
@@ -71,10 +103,20 @@ public class Library {
         return numB;
     }
 
+    /**
+     * returns the most popular author in the Book array.
+     *
+     * @return String. the name of the most popular author.
+     */
     public String mostPopularAuthor() {
         return longestSequence(_lib);
     }
 
+    /**
+     * returns the oldest Book in the Book array by his year of publish.
+     *
+     * @return Book. new object of the oldest book.
+     */
     public Book oldestBook() {
         if (isNull(_lib[0])) // first one is null -> all is null.
             return null;
@@ -90,6 +132,11 @@ public class Library {
         return new Book(oldest);
     }
 
+    /**
+     * overrides the class toString method. Will return all the Books (using the toString Book method) in the Book array.
+     *
+     * @return String. All the Books title, author, year of publish and # of pages that are in the library. No nulls.
+     */
     public String toString() {
         StringBuilder books = new StringBuilder();
 
@@ -137,13 +184,13 @@ public class Library {
      */
     private String[] copyAuthors(Book[] lib) {
         String[] authors = new String[MAX_BOOKS];
-        for (int i = 0; i < authors.length; i++) {
+        for (int i = 0; i < authors.length; i++) { // O(n)
             if (isNull(lib[i]))
                 authors[i] = "";
             else
                 authors[i] = lib[i].getAuthor();
         }
-        Arrays.sort(authors);
+        Arrays.sort(authors); // O(n*log(n))
         return authors;
     }
 
@@ -175,6 +222,5 @@ public class Library {
         }
         return longest;
     }
-
 
 }
