@@ -40,17 +40,6 @@ public class Date {
     // calculateDate and leap methods constants:
     private final int DAYS_IN_REGULAR_YEAR = 365;
     private final int NUM_DAYS_IN_WEEK = 7;
-    private final int _4 = 4;
-    private final int _100 = 100;
-    private final int _400 = 400;
-    private final int _306 = 306;
-    private final int _10 = 10;
-    private final int _62 = 62;
-    private final int _1 = 1;
-    private final int _0 = 0;
-    private final int _2 = 2;
-    private final int _26 = 26;
-
 
     // public constructors: //
 
@@ -200,7 +189,7 @@ public class Date {
         int c = indexYear / 100;
         int y = indexYear % 100;
 
-        int dayOfWeek = (int_day + (_26 * (indexMonth + _1)) / _10 + y + y / _4 + c / _4 - _2 * c) % NUM_DAYS_IN_WEEK;
+        int dayOfWeek = (int_day + (26 * (indexMonth + 1)) / 10 + y + y / 4 + c / 4 - 2 * c) % NUM_DAYS_IN_WEEK;
 
         return dayOfWeek >= MIN_DAY_IN_WEEK ? dayOfWeek : Math.floorMod(dayOfWeek, 7);
     }
@@ -218,7 +207,7 @@ public class Date {
 
     // private methods: //
     private boolean leap(int year) { // check if the year is a leap year.
-        return (year % _4 == _0 && year % _100 != _0) || (year % _400 == _0);
+        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
 
     private boolean isValidDay(int day) {
@@ -257,8 +246,8 @@ public class Date {
             --year;
             month = month + MAX_MONTH;
         }
-        return DAYS_IN_REGULAR_YEAR * year + year / _4 - year / _100 + year / _400 + ((month + _1) * _306) /
-                _10 + (day - _62);
+        return DAYS_IN_REGULAR_YEAR * year + year / 4 - year / 100 + year / 400 + ((month + 1) * 306) /
+                10 + (day - 62);
     }
 
     private int monthForDayInWeek(int month) { // returns the right month for the dayInWeek calculation.
