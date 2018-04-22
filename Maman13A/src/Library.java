@@ -11,13 +11,15 @@ import java.util.Arrays;
 public class Library {
     private final int MAX_BOOKS = 200;
 
-    private Book[] _lib = new Book[MAX_BOOKS];
-    private int _noOfBooks = 0;
+    private Book[] _lib;
+    private int _noOfBooks;
 
     /**
-     * Library class public constructor. Creates object with array of 200 Books (all null to begin with).
+     * Library class public constructor. Creates object with array of 200 Books (all null to begin with), and sets _noOfBooks to 0.
      */
     public Library() {
+        _lib = new Book[MAX_BOOKS];
+        _noOfBooks = 0;
     }
 
     /**
@@ -73,22 +75,6 @@ public class Library {
         return numB;
     }
 
-    /**
-     * returns the number of book in the Book array that are borrowed at a specific date.
-     *
-     * @param date date of borrow to search upon.
-     * @return int. number for borrowed books at the given date.
-     */
-    public int howManyBorrowedAtDate(Date date) {
-        int numB = 0;
-        for (Book book : _lib) {
-            if (isNull(date) || isNull(book))
-                return numB;
-            if (date.equals(book.getBorrowedDate()))
-                ++numB;
-        }
-        return numB;
-    }
 
     /**
      * returns the number of book in the Book array that are borrowed to a specific student.
@@ -137,6 +123,28 @@ public class Library {
     }
 
     /**
+     * removes a given Book title from the library (one copy of it - the first one), and returns a new object of the Book.
+     *
+     * @param title book's title.
+     * @return the Book that was removed.
+     */
+    public Book remove(String title) {
+        for (int i = 0; i < _lib.length; i++) {
+            if (isNull(_lib[i]) || isNull(title)) { // if wasn't found and reached null or title is null
+                return null;
+            }
+            if (_lib[i].getTitle().equals(title)) { // if book found
+                Book bookToRemove = new Book(_lib[i]);
+                _lib[i] = null;
+                _noOfBooks--;
+                arrangeArray();
+                return bookToRemove;
+            }
+        }
+        return null; // if didn't reached null and didn't find.
+    }
+
+    /**
      * overrides the class toString method. Will return all the Books (using the toString Book method) in the Book array.
      *
      * @return String. All the Books title, author, year of publish and # of pages that are in the library. No nulls.
@@ -159,10 +167,6 @@ public class Library {
         return book == null;
     }
 
-    private boolean isNull(Date date) {
-        return date == null;
-    }
-
     private boolean isNull(String str) {
         return str == null;
     }
@@ -172,8 +176,7 @@ public class Library {
         int j = 0; // temp index starting
         for (Book book : _lib) {
             if (!isNull(book)) {
-                temp[j] = new Book(book);
-                ++j;
+                temp[j++] = new Book(book);
             }
         }
         _lib = temp;
@@ -181,7 +184,7 @@ public class Library {
 
 
     /*
-    making a new String array of authors. empty String instead of null so they could be sorted.
+    making a new String array of authors. empty String instead of null so they could be sorted (comparable).
     sort - O(nlog(n)).
     building new array - O(n).
     total - O(nlog(n) + n).
@@ -189,10 +192,11 @@ public class Library {
     private String[] copyAuthors(Book[] lib) {
         String[] authors = new String[MAX_BOOKS];
         for (int i = 0; i < authors.length; i++) { // O(n)
-            if (isNull(lib[i]))
+            if (isNull(lib[i])) {
                 authors[i] = "";
-            else
+            } else {
                 authors[i] = lib[i].getAuthor();
+            }
         }
         Arrays.sort(authors); // O(n*log(n))
         return authors;
@@ -209,20 +213,19 @@ public class Library {
         int longestCnt = 0;
         String longest = authors[0];
 
-        for (Book book : lib) { // O(n)
-            if (isNull(book))
-                return longest;
-
-            currentBatchCnt++;
-            if (book.getAuthor().equals(longest)) {
-                longestCnt++;
-            } else if (!book.getAuthor().equals(currentBatch)) {
-                currentBatchCnt = 1;
-            } else if (currentBatchCnt > longestCnt) {
-                longestCnt = currentBatchCnt;
-                longest = book.getAuthor();
+        for (String author : authors) { // O(n)
+            if (!author.equals("")) {
+                currentBatchCnt++;
+                if (author.equals(longest)) {
+                    longestCnt++;
+                } else if (!author.equals(currentBatch)) {
+                    currentBatchCnt = 1; // switched to new batch
+                } else if (currentBatchCnt > longestCnt) {
+                    longestCnt = currentBatchCnt;
+                    longest = author;
+                }
+                currentBatch = author; // setting the currentBatch
             }
-            currentBatch = book.getAuthor();
         }
         return longest;
     }
