@@ -42,16 +42,19 @@ public class Library {
      * @param book other Book to add.
      */
     public void removeBook(Book book) {
-        if (!isNull(book)) {
-            for (int i = 0; i < _noOfBooks; i++) {
-                if (!isNull(_lib[i]) && _lib[i].equals(book)) {
-                    _lib[i] = null;
-                    _noOfBooks--;
-                }
-            }
-            arrangeArray();
+        if (isNull(book)) {
+            return;
         }
+        int bookCnt = _noOfBooks;
+        for (int i = 0; i < bookCnt; i++) {
+            if (_lib[i].equals(book)) {
+                _lib[i] = null;
+                _noOfBooks--;
+            }
+        }
+        arrangeArray();
     }
+
 
     /**
      * returns the number of book in the Book array that are borrowed at the moment.
@@ -76,7 +79,7 @@ public class Library {
      * @param studentName name of student to search upon.
      * @return int. number for borrowed books at the given student.
      */
-    public int howManyBorrowedToStudent(String studentName) {
+    public int howManyBooksBorrowedToStudent(String studentName) {
         int numB = 0;
         for (Book book : _lib) {
             if (isNull(book) || isNull(studentName))
@@ -123,7 +126,8 @@ public class Library {
      * @return the Book that was removed.
      */
     public Book remove(String title) {
-        for (int i = 0; i < _noOfBooks && !isNull(title); i++) {
+        int BookCnt = _noOfBooks;
+        for (int i = 0; i < BookCnt && !isNull(title); i++) {
             if (_lib[i].getTitle().equals(title)) {
                 Book bookToRemove = new Book(_lib[i]);
                 _lib[i] = null;
