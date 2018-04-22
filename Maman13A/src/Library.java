@@ -29,17 +29,11 @@ public class Library {
      * @return true if the book was added. false if wasn't added.
      */
     public boolean addBook(Book book) {
-        if (isNull(book))
+        if (isNull(book) || _noOfBooks == MAX_BOOKS)
             return false;
 
-        for (int i = 0; i < _lib.length; i++) {
-            if (isNull(_lib[i])) {
-                _lib[i] = new Book(book);
-                _noOfBooks++;
-                return true;
-            }
-        }
-        return false;
+        _lib[_noOfBooks++] = new Book(book);
+        return true;
     }
 
     /**
@@ -49,14 +43,14 @@ public class Library {
      */
     public void removeBook(Book book) {
         if (!isNull(book)) {
-            for (int i = 0; i < _lib.length; i++) {
+            for (int i = 0; i < _noOfBooks; i++) {
                 if (!isNull(_lib[i]) && _lib[i].equals(book)) {
                     _lib[i] = null;
                     _noOfBooks--;
                 }
             }
+            arrangeArray();
         }
-        arrangeArray();
     }
 
     /**
@@ -129,11 +123,8 @@ public class Library {
      * @return the Book that was removed.
      */
     public Book remove(String title) {
-        for (int i = 0; i < _lib.length; i++) {
-            if (isNull(_lib[i]) || isNull(title)) { // if wasn't found and reached null or title is null
-                return null;
-            }
-            if (_lib[i].getTitle().equals(title)) { // if book found
+        for (int i = 0; i < _noOfBooks && !isNull(title); i++) {
+            if (_lib[i].getTitle().equals(title)) {
                 Book bookToRemove = new Book(_lib[i]);
                 _lib[i] = null;
                 _noOfBooks--;
