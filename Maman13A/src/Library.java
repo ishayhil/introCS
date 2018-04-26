@@ -96,7 +96,22 @@ public class Library {
      * @return String. the name of the most popular author.
      */
     public String mostPopularAuthor() {
-        return longestSequence(_lib);
+        String mostPop = _lib[0] == null ? null : _lib[0].getAuthor();
+        int mostPopCount = 0;
+
+        for (Book book : _lib) {
+            if (isNull(book)) // due to the fact that there are not null between two books, once reached null; return value.
+                return mostPop;
+
+            String currentAuthor = book.getAuthor();
+            int currentAuthorCount = authorCnt(currentAuthor);
+
+            if (currentAuthorCount > mostPopCount) {
+                mostPop = currentAuthor;
+                mostPopCount = currentAuthorCount;
+            }
+        }
+        return mostPop;
     }
 
     /**
@@ -105,18 +120,17 @@ public class Library {
      * @return Book. new object of the oldest book.
      */
     public Book oldestBook() {
-        if (isNull(_lib[0])) // first one is null -> all is null.
-            return null;
-
-        Book oldest = new Book(_lib[0]);
+        Book oldest = _lib[0] == null ? null : new Book(_lib[0]);
 
         for (Book book : _lib) {
-            if (isNull(book)) // due to the fact that there are not null between two books, once reached null; break loop.
-                return new Book(oldest);
-            if (book.getYear() < oldest.getYear())
+            if (isNull(book) || isNull(oldest)) { // due to the fact that there are not null between two books, once reached null; break loop.
+                return oldest;
+            }
+            if (book.getYear() < oldest.getYear()) {
                 oldest = new Book(book);
+            }
         }
-        return new Book(oldest);
+        return oldest;
     }
 
     /**
@@ -145,14 +159,13 @@ public class Library {
      * @return String. All the Books title, author, year of publish and # of pages that are in the library. No nulls.
      */
     public String toString() {
-        StringBuilder books = new StringBuilder();
-
+        String books = "";
         for (Book book : _lib) {
             if (!isNull(book))
-                books.append(book).append("\n");
+                books += (book + "\n");
         }
 
-        return books.toString();
+        return books;
     }
 
 
@@ -177,52 +190,22 @@ public class Library {
         _lib = temp;
     }
 
+    private int authorCnt(String currentAuth) { // returns each authors library's count.
+        int cnt = 0;
+        for (Book book : _lib) {
+            if (isNull(book)) { // reached the end of lib.
+                return cnt;
+            }
 
-    /*
-    making a new String array of authors. empty String instead of null so they could be sorted (comparable).
-    sort - O(nlog(n)).
-    building new array - O(n).
-    total - O(nlog(n) + n).
-     */
-    private String[] copyAuthors(Book[] lib) {
-        String[] authors = new String[MAX_BOOKS];
-        for (int i = 0; i < authors.length; i++) { // O(n)
-            if (isNull(lib[i])) {
-                authors[i] = "";
-            } else {
-                authors[i] = lib[i].getAuthor();
+            if (isNull(currentAuth) && isNull(book.getAuthor())) { // if currentAuth is null (possible), searches for other books with null author.
+                cnt++;
+            }
+            if (!isNull(book.getAuthor()) && book.getAuthor().equals(currentAuth)) {
+                cnt++;
             }
         }
-        Arrays.sort(authors); // O(n*log(n))
-        return authors;
+        return cnt;
     }
 
-    private String longestSequence(Book[] lib) { // returning the longest "batch" after sorted. O(nlogn(n) + 2n).
-        if (isNull(lib[0]))
-            return null;
-
-        String[] authors = copyAuthors(lib);
-
-        int currentBatchCnt = 0;
-        String currentBatch = authors[0];
-        int longestCnt = 0;
-        String longest = authors[0];
-
-        for (String author : authors) { // O(n)
-            if (!author.equals("")) {
-                currentBatchCnt++;
-                if (author.equals(longest)) {
-                    longestCnt++;
-                } else if (!author.equals(currentBatch)) {
-                    currentBatchCnt = 1; // switched to new batch
-                } else if (currentBatchCnt > longestCnt) {
-                    longestCnt = currentBatchCnt;
-                    longest = author;
-                }
-                currentBatch = author; // setting the currentBatch
-            }
-        }
-        return longest;
-    }
 
 }
