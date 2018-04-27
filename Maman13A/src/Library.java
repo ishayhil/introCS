@@ -142,7 +142,7 @@ public class Library {
     public Book remove(String title) {
         int BookCnt = _noOfBooks;
         for (int i = 0; i < BookCnt && !isNull(title); i++) {
-            if (_lib[i].getTitle().equals(title)) {
+            if (!isNull(_lib[i].getTitle()) && _lib[i].getTitle().equals(title)) {
                 Book bookToRemove = new Book(_lib[i]);
                 _lib[i] = null;
                 _noOfBooks--;
