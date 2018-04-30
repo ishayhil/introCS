@@ -159,12 +159,11 @@ public class Library {
      * @return String. All the Books title, author, year of publish and # of pages that are in the library. No nulls.
      */
     public String toString() {
-        String books = "";
+        String books = "The books in the library are: \n \n";
         for (Book book : _lib) {
             if (!isNull(book))
-                books += (book + "\n");
+                books += (book + "\n \n");
         }
-
         return books;
     }
 
