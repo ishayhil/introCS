@@ -73,6 +73,11 @@ public class Ex14 {
         // find the initial row that the value is between/equals
         // time complexity: O(n - 1) = O(n).
         // space complexity: O(1).
+        if (m[0][0] > val) // if not between values - check the row.
+            return 0;
+        if (m[0][m.length - 1] < val)
+            return m.length - 2;
+
         for (int i = 0; i < m.length - 1; i++) {
             if (m[i][0] == val || m[i + 1][0] == val) // if value equals to current row or one below
                 return i;
@@ -86,26 +91,85 @@ public class Ex14 {
 
     // *****************************************************************************
 
+    /**
+     * Question 2, A:
+     * returns the count of subsets in string that start with a given char (x for example),
+     * has one x inside of it, and ends with char.
+     * worst time complexity: O(n) -> cCounter private method. n = String's length
+     * space complexity: O(1).
+     *
+     * @param s the String.
+     * @param c the char.
+     * @return int. count of subsets
+     */
     public static int subStrC(String s, char c) {
-        int n = s.length();
-        int cCounter = 0;
-        int subSetCounter = 0;
-
-        if (n < 3)
-            return 0;
-
-        for (int i = 0; i < s.length(); i++) { // O(n)
-            if (s.charAt(i) != c)
-                continue;
-
-            cCounter++;
-            if (cCounter == 3) {
-                subSetCounter++;
-                cCounter = 2;
-            }
-        }
-        return subSetCounter;
+        int counter = cCounter(s, c);
+        return counter > 1 ? counter - 2 : 0; // O(n)
     }
 
+    /**
+     * Question 2, B:
+     * returns the count of subsets in string that start with a given char (x for example),
+     * has max of k chars inside of it, and ends with char.
+     * worst time complexity: O(n + k). n = String's length.
+     * space complexity: O(1 + 1) = O(1).
+     *
+     * @param s the String.
+     * @param c the char.
+     * @param k int. the max char appearances.
+     * @return int. count of subsets
+     */
+    public static int subStrMaxC(String s, char c, int k) {
+        int cCount = cCounter(s, c); // time comp: O(n) -> (n = s length)
+        int subSets = 0;
+
+        /*
+         * we can build a series from the amount of subsets for each x in k (0,1,2,..,k).
+         * a1 will be the amount of c in s minus (k + 1) -> cCount - k + 1
+         * d will be 1
+         * n will be (k + 1) mod cCount -> because it can be <= 0 if k >= c.
+         * Then, S(n) of this series is the amount of subsets until the given k.
+         * S(n) = n * (2 * a1 + (n - 1) * d) / 2
+         */
+//        int n = cCount > k ? k + 1 : (k + 1) % cCount;
+//        int d = -1;
+//        int a1 = cCount - 1;
+//
+//        return n * (2 * a1 + (n - 1) * d) / 2;
+
+        for (int j = 1; j < k + 2; j++) // O(k)
+            if (cCount - j >= 0)
+                // until the amount doesn't go below 0, keep adding the amount of subsets for each x in k.
+                subSets += cCount - j;
+            else
+                return subSets;
+
+        return subSets;
+    }
+
+    private static int cCounter(String s, char c) {
+        int counter = 0;
+        for (int i = 0; i < s.length(); i++) { // time comp: O(n)
+            if (s.charAt(i) == c)
+                counter++;
+        }
+        return counter;
+    }
+
+    // *****************************************************************************
+
+    public static int spiderman(int n) {
+        if (n < 1)
+            return 0;
+
+        switch (n) {
+            case 1:
+                return 1;
+            case 2:
+                return 2;
+            default:
+                return spiderman(n - 1) + spiderman(n - 2);
+        }
+    }
 
 }
