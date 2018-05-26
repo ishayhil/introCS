@@ -25,6 +25,9 @@ public class Ex14 {
      * @return true if value inside of matrix, false if not.
      */
     public static boolean findValWhat(int[][] m, int val) {
+        if (m == null)
+            return false;
+
         int n = m.length;
         int row = 0; // top row
         int col = n - 1; // most right column
@@ -55,6 +58,9 @@ public class Ex14 {
      * @return true if value inside of matrix, false if not.
      */
     public static boolean findValTest(int[][] m, int val) {
+        if (m == null)
+            return false;
+
         int initialRow = findTestValRow(m, val); // time comp: O(n). Space comp: O(1).
         int n = m.length;
 
@@ -73,9 +79,9 @@ public class Ex14 {
         // find the initial row that the value is between/equals
         // time complexity: O(n - 1) = O(n).
         // space complexity: O(1).
-        if (m[0][0] > val) // if not between values - check the row.
+        if (m[0][0] > val) // if value is smaller than the first value, check first row.
             return 0;
-        if (m[0][m.length - 1] < val)
+        if (m[0][m.length - 1] < val) // if value is larger than last value in first col, check last row.
             return m.length - 2;
 
         for (int i = 0; i < m.length - 1; i++) {
@@ -103,7 +109,7 @@ public class Ex14 {
      * @return int. count of subsets
      */
     public static int subStrC(String s, char c) {
-        int counter = cCounter(s, c);
+        int counter = cCounter(s, c); // by subtracting 2 from the c counter, be get all Cs with 1 c between them.
         return counter > 1 ? counter - 2 : 0; // O(n)
     }
 
@@ -111,8 +117,8 @@ public class Ex14 {
      * Question 2, B:
      * returns the count of subsets in string that start with a given char (x for example),
      * has max of k chars inside of it, and ends with char.
-     * worst time complexity: O(n + k). n = String's length.
-     * space complexity: O(1 + 1) = O(1).
+     * worst time complexity: O(n). n = String's length.
+     * space complexity: O(5) = O(1).
      *
      * @param s the String.
      * @param c the char.
@@ -121,33 +127,27 @@ public class Ex14 {
      */
     public static int subStrMaxC(String s, char c, int k) {
         int cCount = cCounter(s, c); // time comp: O(n) -> (n = s length)
-        int subSets = 0;
 
         /*
-         * we can build a series from the amount of subsets for each x in k (0,1,2,..,k).
-         * a1 will be the amount of c in s minus (k + 1) -> cCount - k + 1
-         * d will be 1
-         * n will be (k + 1) mod cCount -> because it can be <= 0 if k >= c.
+         * we can build a series from the amount of subsets for each x in k (cCount - 1, cCount - 2, cCount - 3...) -> n is k + 1.
+         * a1 is cCount - 1.
+         * d will be -1.
+         * n is c - 1 if k + 1 (the n in our series) is bigger than the n max (because then we will go below 0 and start summing negative numb).
+         * i got the n max by: An = c - 1 + (n-1)*-1 ->  0 = cCount - n ->  n = c.
          * Then, S(n) of this series is the amount of subsets until the given k.
          * S(n) = n * (2 * a1 + (n - 1) * d) / 2
          */
-//        int n = cCount > k ? k + 1 : (k + 1) % cCount;
-//        int d = -1;
-//        int a1 = cCount - 1;
-//
-//        return n * (2 * a1 + (n - 1) * d) / 2;
+        int n_max = k + 1 > cCount ? cCount : k + 1;
+        int d = -1;
+        int a1 = cCount - 1;
 
-        for (int j = 1; j < k + 2; j++) // O(k)
-            if (cCount - j >= 0)
-                // until the amount doesn't go below 0, keep adding the amount of subsets for each x in k.
-                subSets += cCount - j;
-            else
-                return subSets;
-
-        return subSets;
+        return n_max * (2 * a1 + (n_max - 1) * d) / 2; // S(n)
     }
 
     private static int cCounter(String s, char c) {
+        if (s == null)
+            return 0;
+
         int counter = 0;
         for (int i = 0; i < s.length(); i++) { // time comp: O(n)
             if (s.charAt(i) == c)
@@ -159,8 +159,9 @@ public class Ex14 {
     // *****************************************************************************
 
     public static int spiderman(int n) {
-        if (n < 1)
+        if (n < 1) {
             return 0;
+        }
 
         switch (n) {
             case 1:
@@ -169,7 +170,54 @@ public class Ex14 {
                 return 2;
             default:
                 return spiderman(n - 1) + spiderman(n - 2);
+
         }
+    }
+
+    public static int spidermanPhoneBooth20(int n) {
+        if (n < 20 || n > 29)
+            return 0;
+
+        if (n == 20)
+            return spiderman(20);
+
+        return spiderman(n) - (spiderman(20) * (spiderman(n - 20) - 1));
+    }
+
+    // *****************************************************************************
+
+    /**
+     * Question 4.
+     * countPaths will count the amount of valid paths between matrix[0][0] to the end of the matrix (matrix[rows-1][columns-1]).
+     * it will work on a recursive way -> gives the ability to see if each cell can go forward without getting outside of the matrix/hit 0 value.
+     * By doing so, be cover all options for both cases.
+     *
+     * @param mat the matrix.
+     * @return int. the amount of possible legit paths.
+     */
+    public static int countPaths(int[][] mat) {
+        if (mat == null)
+            return 0;
+
+        return countPaths(mat, 0, 0);
+    }
+
+    private static int countPaths(int[][] mat, int currentRow, int currentCol) { // countPaths overloading.
+        if (currentRow == mat.length - 1 && currentCol == mat[0].length - 1) // if reached to the last matrix value.
+            return 1;
+        if (currentRow > mat.length - 1 || currentCol > mat[0].length - 1 || mat[currentRow][currentCol] == 0)
+            return 0; // if outside of matrix OR 0 is the current value (endless loop) -> not legit path
+
+        if (mat[currentRow][currentCol] % 10 == mat[currentRow][currentCol] / 10)
+            // if both ways will take you to the same cell (i.e 11,22,33,44..), then to avoid duplicated counting -> limit to one next option.
+            return countPaths(mat, currentRow + mat[currentRow][currentCol] % 10, currentCol + mat[currentRow][currentCol] / 10);
+
+        // by returning countPaths with ones to the rows and tens to the columns i get all available valid paths for this option.
+        // by adding the countPaths with tens to the rows and ones to the columns, i get all the available valid paths for this option.
+        // so the sum will give all the available valid paths for both cases.
+        // % 10 -> ones. / 10 -> tens.
+        return countPaths(mat, currentRow + mat[currentRow][currentCol] % 10, currentCol + mat[currentRow][currentCol] / 10) +
+                countPaths(mat, currentRow + mat[currentRow][currentCol] / 10, currentCol + mat[currentRow][currentCol] % 10);
     }
 
 }
