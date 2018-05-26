@@ -110,14 +110,14 @@ public class Ex14 {
      */
     public static int subStrC(String s, char c) {
         int counter = cCounter(s, c); // by subtracting 2 from the c counter, be get all Cs with 1 c between them.
-        return counter > 1 ? counter - 2 : 0; // O(n)
+        return counter > 1 ? counter - 2 : 0; // time comp: O(n)
     }
 
     /**
      * Question 2, B:
      * returns the count of subsets in string that start with a given char (x for example),
      * has max of k chars inside of it, and ends with char.
-     * worst time complexity: O(n). n = String's length.
+     * worst time complexity: O(n) -> cCounter private method. n = String's length.
      * space complexity: O(5) = O(1).
      *
      * @param s the String.
@@ -158,29 +158,53 @@ public class Ex14 {
 
     // *****************************************************************************
 
+    /**
+     * Question 3.A.
+     * Will calculate the number of paths spiderman can have in order to get to floor n.
+     * Spiderman can only jump one OR two floors at once.
+     *
+     * @param n last floor.
+     * @return int. number of paths.
+     */
     public static int spiderman(int n) {
         if (n < 1) {
             return 0;
         }
 
         switch (n) {
-            case 1:
+            case 1: // only one way to get to 1st floor.
                 return 1;
-            case 2:
+            case 2: // only 2 ways to get to 2nd floor.
                 return 2;
             default:
+                // {n} = amount of ways to get to floor n.
+                // {n} = {n-1} + {n-2} -> all the paths to the floor below + all the paths to 2 floors below
+                // due to the jump's two possibilities.
+                // so, by returning both sums, we will get the total count recursively.
                 return spiderman(n - 1) + spiderman(n - 2);
 
         }
     }
 
+    /**
+     * Question 3.B.
+     * Will calculate the number of paths spiderman can get to n floor (20 <= n <= 29). But, if getting to the 20th
+     * floor, an elevator will take spiderman directly to n floor.
+     *
+     * @param n the last floor.
+     * @return int. amount of paths.
+     */
     public static int spidermanPhoneBooth20(int n) {
         if (n < 20 || n > 29)
             return 0;
 
-        if (n == 20)
+        if (n == 20) // calculate 20 regularly.
             return spiderman(20);
 
+        // if each floor > 20, there is spiderman(n-20) paths to get to 20. We need to subtract all of these
+        // paths, and add only one spiderman(20) -> the way to get to the n floor with the elevator.
+        // i.e: spiderman(23)' = spiderman(23) - spiderman(20) * 3 + spiderman(20) because
+        // {23} = {22} + {21}, {22} = {21} + {20}, {21} = {20} + {19} -> there are 3*{20} in {23}.
         return spiderman(n) - (spiderman(20) * (spiderman(n - 20) - 1));
     }
 
