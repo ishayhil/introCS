@@ -81,7 +81,7 @@ public class Ex14 {
         // space complexity: O(1).
         if (m[0][0] > val) // if value is smaller than the first value, check first row.
             return 0;
-        if (m[0][m.length - 1] < val) // if value is larger than last value in first col, check last row.
+        if (m[m.length - 1][0] < val) // if value is larger than last value in first col, check last row.
             return m.length - 2;
 
         for (int i = 0; i < m.length - 1; i++) {
