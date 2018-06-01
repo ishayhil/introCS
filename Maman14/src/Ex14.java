@@ -182,7 +182,6 @@ public class Ex14 {
                 // due to the jump's two possibilities.
                 // so, by returning both sums, we will get the total count recursively.
                 return spiderman(n - 1) + spiderman(n - 2);
-
         }
     }
 
@@ -232,16 +231,23 @@ public class Ex14 {
         if (currentRow > mat.length - 1 || currentCol > mat[0].length - 1 || mat[currentRow][currentCol] == 0)
             return 0; // if outside of matrix OR 0 is the current value (endless loop) -> not legit path
 
-        if (mat[currentRow][currentCol] % 10 == mat[currentRow][currentCol] / 10)
+        if (getTens(mat[currentRow][currentCol]) == getOnes(mat[currentRow][currentCol]))
             // if both ways will take you to the same cell (i.e 11,22,33,44..), then to avoid duplicated counting -> limit to one next option.
-            return countPaths(mat, currentRow + mat[currentRow][currentCol] % 10, currentCol + mat[currentRow][currentCol] / 10);
+            return countPaths(mat, currentRow + getOnes(mat[currentRow][currentCol]), currentCol + getTens(mat[currentRow][currentCol]));
 
         // by returning countPaths with ones to the rows and tens to the columns i get all available valid paths for this option.
         // by adding the countPaths with tens to the rows and ones to the columns, i get all the available valid paths for this option.
         // so the sum will give all the available valid paths for both cases.
-        // % 10 -> ones. / 10 -> tens.
-        return countPaths(mat, currentRow + mat[currentRow][currentCol] % 10, currentCol + mat[currentRow][currentCol] / 10) +
-                countPaths(mat, currentRow + mat[currentRow][currentCol] / 10, currentCol + mat[currentRow][currentCol] % 10);
+        return countPaths(mat, currentRow + getOnes(mat[currentRow][currentCol]), currentCol + getTens(mat[currentRow][currentCol])) +
+                countPaths(mat, currentRow + getTens(mat[currentRow][currentCol]), currentCol + getOnes(mat[currentRow][currentCol]));
+    }
+
+    private static int getOnes(int num) {
+        return num % 10;
+    }
+
+    private static int getTens(int num) {
+        return num / 10;
     }
 
 }
