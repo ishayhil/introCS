@@ -1,5 +1,6 @@
 /**
  * OpenUniversity old exams solved questions.
+ *
  * @author Ishay Hilzenrat
  */
 public class OldExams {
@@ -46,7 +47,7 @@ public class OldExams {
     }
 
 
-    public static boolean isValidPlace(int mLen, int row, int col) {
+    private static boolean isValidPlace(int mLen, int row, int col) {
         return row > -1 && col > -1 && row < mLen && col < mLen;
     }
 
@@ -70,7 +71,7 @@ public class OldExams {
             return 1 + edit(s2.charAt(0) + s1, s2);
         }
 
-        return 1 + edit(s1.substring(1), s2);
+        return 1 + edit(s1.substring(1), s2); // if letter is not needed, remove it
     }
 
     private static boolean isLetterNeeded(char c, String s2) {
@@ -83,5 +84,77 @@ public class OldExams {
         return isLetterNeeded(c, s2.substring(1));
     }
 
+    public static int countTriplets(int[] arr, int num) {
+        int cnt = 0;
+        int low = 0;
+        int mid = 1;
+        int high = arr.length - 1;
+
+        while (high != mid) { // time comp: O(n^2). while high and low are doing O(n) together, middle is running beside them.
+            if (arr[low] + arr[mid] + arr[high] < num) {
+                cnt += (high - mid);
+                if (mid + 1 != high)
+                    mid++;
+                else {
+                    low++;
+                    mid = low + 1;
+                }
+            } else
+                high--;
+        }
+        return cnt;
+    }
+
+    // ***************************************** 2013A moed B ************************************************* //
+
+    public static boolean match(int[] a, int[] pattern) {
+        return match(a, pattern, 0, 0, 0);
+    }
+
+    private static boolean match(int[] a, int[] pattern, int beginning, int i, int counter) {
+        if (pattern.length == 0 || counter == pattern.length)
+            return true;
+
+        if (beginning + i > a.length - 1)
+            return false;
+
+        if (a[beginning + i] > 9 && a[beginning + i] < 100 && pattern[i] == 2 || a[beginning + i] < 10 && pattern[i] == 1
+                || a[beginning + i] < 100 && pattern[i] == 0)
+            return match(a, pattern, beginning, i + 1, counter + 1);
+
+        return match(a, pattern, beginning + 1, 0, 0);
+    }
+
+    // ***************************************** 2013B moed A ************************************************* //
+
+    public static boolean balancedPartition(int[] arr) {
+        int sumToFind = sumArr(arr, 0);
+        if (sumToFind % 2 != 0)
+            return false;
+
+        return balancedPartition(arr, 0, 0, 0, 0, 0, sumToFind / 2);
+    }
+
+    private static boolean balancedPartition(int[] arr, int i, int sumA, int counterA, int sumB, int counterB, int sumToFind) {
+        if (arr.length % 2 != 0)
+            return false;
+
+        if (i > arr.length - 1) {
+            if (counterA == counterB && sumA == sumToFind && sumB == sumToFind)
+                return true;
+            else
+                return false;
+        }
+
+        return balancedPartition(arr, i + 1, sumA + arr[i], 1 + counterA, sumB, counterB, sumToFind) ||
+                balancedPartition(arr, i + 1, sumA, counterA, sumB + arr[i], counterB + 1, sumToFind);
+    }
+
+    private static int sumArr(int[] arr, int ind) {
+        if (ind > arr.length - 1)
+            return 0;
+
+        return arr[ind] + sumArr(arr, ind + 1);
+    }
 
 }
