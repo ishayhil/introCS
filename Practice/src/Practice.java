@@ -1,6 +1,8 @@
 /**
- * Created by ishayhilzenrat on 03/06/2018.
+ * practice of: http://www.tau.ac.il/~csedu/itzuv/itzuv_ch1_requ.pdf
+ * @author ishayhilzenrat
  */
+
 public class Practice {
     // *****************************************************************************************************
     public static int printBelow(int n, int currentN) {
@@ -128,7 +130,7 @@ public class Practice {
         if (current == n - 1)
             return 1;
         if (current == n - 2)
-                return 2;
+            return 2;
 
         return getDown(n, current + 1) + getDown(n, current + 2);
     }
