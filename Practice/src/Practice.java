@@ -1,5 +1,6 @@
 /**
  * practice of: http://www.tau.ac.il/~csedu/itzuv/itzuv_ch1_requ.pdf
+ *
  * @author ishayhilzenrat
  */
 
@@ -155,5 +156,60 @@ public class Practice {
 
         return binaryPrintNo11(n - 1, s + '1') + binaryPrintNo11(n - 1, s + '0');
     }
+
+    public static int sumArray(int[] arr, int left, int right) {
+        if (left == right)
+            return arr[left];
+
+        int l = sumArray(arr, left, (left + right) / 2);
+        int r = sumArray(arr, (left + right) / 2 + 1, right);
+
+        return l + r;
+    }
+
+    public static boolean isSorted(int[] arr) {
+        return isSorted(arr, 0, arr.length - 1);
+    }
+
+
+    private static boolean isSorted(int[] arr, int left, int right) {
+        System.out.println(left + "," + right);
+        int left_run, right_run;
+        if ((left + right) % 2 != 0) {// even str len
+            left_run = (left + right) / 2;
+            right_run = (left + right) / 2 + 1;
+        } else { // odd str len
+            left_run = (left + right) / 2 - 1;
+            right_run = (left + right) / 2;
+        }
+
+        if (left == right)
+            return true;
+
+        if (sumArray(arr, left, left_run) > sumArray(arr, right_run, right)) {
+            return false;
+        }
+
+        return isSorted(arr, left, right - 1) && isSorted(arr, left + 1, right);
+    }
+
+    private static int biggestDif(int[] arr, int left, int right, int max) {
+        int val = Math.abs(arr[left] - arr[right]);
+
+        if (val > max)
+            max = val;
+
+        if (left == right)
+            return max;
+
+        return Math.max(biggestDif(arr, left + 1, right, max), biggestDif(arr, left, right - 1, max));
+    }
+
+    public static int biggestDif(int[] arr) {
+        return biggestDif(arr, 0, arr.length - 1, -1);
+    }
+
+
+
 
 }

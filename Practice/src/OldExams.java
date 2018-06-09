@@ -1,5 +1,5 @@
 /**
- * OpenUniversity old exams solved questions.
+ * OpenUniversity old intoToCs exams solved questions.
  *
  * @author Ishay Hilzenrat
  */
@@ -156,5 +156,128 @@ public class OldExams {
 
         return arr[ind] + sumArr(arr, ind + 1);
     }
+
+    // ***************************************** 2013B moed A ************************************************* //
+
+    private static int minPoints(int[][] arr, int sum, int row, int col, int min) {
+        sum += arr[row][col];
+        if (min > sum)
+            min = sum;
+
+        if (row == arr.length - 1 && col == arr[0].length - 1)
+            return min;
+
+        if (canIGoRight(arr, col + 1) && canIGoDown(arr, row + 1))
+            return max(minPoints(arr, sum, row + 1, col, min), minPoints(arr, sum, row, col + 1, min));
+
+        if (canIGoRight(arr, col + 1))
+            return minPoints(arr, sum, row, col + 1, min);
+
+        return minPoints(arr, sum, row + 1, col, min);
+    }
+
+    private static boolean canIGoRight(int[][] arr, int col) {
+        return col < arr[0].length;
+    }
+
+    private static boolean canIGoDown(int[][] arr, int row) {
+        return row < arr.length;
+    }
+
+    private static int max(int a, int b) {
+        if (b > a)
+            return b;
+
+        return a;
+    }
+
+    public static int minPoints(int[][] arr) {
+        return -1 * minPoints(arr, 0, 0, 0, 0) + 1;
+    }
+
+    public static boolean findX(int[] arr, int val) { // binary search implementation.
+        if (arr == null || arr.length == 1)
+            return false;
+
+        int left = 0;
+        int right = arr.length - 1;
+
+        while (left != right) { // O(log(n))
+            int m = (left + right) / 2;
+
+            if (m - 1 < 0 & arr[m] + arr[m + 1] != val)
+                return false;
+            if (m + 1 > arr.length - 1 && arr[m] + arr[m - 1] != val)
+                return false;
+
+            if (arr[m] + arr[m - 1] == val || arr[m] + arr[m + 1] == val)
+                return true;
+
+            if (arr[m] + arr[m - 1] > val)
+                right = m - 1;
+            else
+                left = m + 1;
+        }
+        return false;
+    }
+
+    // ***************************************** 2016A moed A ************************************************* //
+
+    public static int minDiff(int[] arr) {
+        return minDiff(arr, sumA(arr, 0, arr.length - 1, 0), 0, arr.length - 1);
+    }
+
+    private static int minDiff(int[] arr, int currentMin, int left, int right) {
+        int currentD = Math.abs(sumA(arr, left, right, 0) -
+                (sumA(arr, 0, left - 1, 0) + sumA(arr, right + 1, arr.length - 1, 0)));
+
+        if (currentD < currentMin)
+            currentMin = currentD;
+
+        if (left == right)
+            return currentMin;
+
+        return Math.min(minDiff(arr, currentMin, left + 1, right), minDiff(arr, currentMin, left, right - 1));
+    }
+
+    private static int sumA(int[] arr, int start, int end, int sum) {
+        if (end < 0 || start > arr.length - 1)
+            return 0;
+
+        if (start == end)
+            return sum + arr[start];
+
+        return sumA(arr, start + 1, end, sum + arr[start]);
+    }
+
+    public static int passingCars(int[] arr) { // complexity: O(2n) = O(n)
+        // 0 = east
+        // 1 = west
+        // (a,b) are passing <=> a < b
+        if (arr == null)
+            return 0;
+
+        int cntWest = countWest(arr); // O(n)
+        int total = 0;
+
+        for (int car : arr) { // O(n)
+            if (car == 1)
+                cntWest--;
+            else
+                total += cntWest;
+        }
+        return total;
+    }
+
+    private static int countWest(int[] arr) { // O(n)
+        int cnt = 0;
+        for (int car : arr) {
+            if (car == 1)
+                cnt++;
+        }
+        return cnt;
+    }
+
+
 
 }
