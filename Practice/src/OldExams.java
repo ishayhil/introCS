@@ -60,6 +60,7 @@ public class OldExams {
     }
 
     // ***************************************** 2017b moed A ************************************************* //
+
     public static int edit(String s1, String s2) {
         if (s1.length() == 0 || s2.length() == 0)
             return s1.length() + s2.length();
@@ -278,6 +279,67 @@ public class OldExams {
         return cnt;
     }
 
+    // ***************************************** 2018A moed A ************************************************* //
+
+    private static int longestSlope(int[][] arr, int row, int col, int num) {
+        int nextR = row;
+        int nextC = col + 1;
+        if (col == arr[0].length) {
+            nextC = 0;
+            nextR = row + 1;
+        }
+
+        if (row == arr.length)
+            return 0;
+
+        int thisS = howManyForThis(arr, row, col, num);
+        int nextS = longestSlope(arr, nextR, nextC, num);
+
+        return Math.max(thisS, nextS);
+
+    }
+
+    private static int howManyForThis(int[][] arr, int row, int col, int num) {
+        int max = 1;
+        if (isValidPlace(arr, row, col + 1) && arr[row][col] + num == arr[row][col + 1])
+            max = Math.max(max, 1 + howManyForThis(arr, row, col + 1, num));
+
+        if (isValidPlace(arr, row, col - 1) && arr[row][col] + num == arr[row][col - 1])
+            max = Math.max(max, 1 + howManyForThis(arr, row, col - 1, num));
+
+        if (isValidPlace(arr, row + 1, col) && arr[row][col] + num == arr[row + 1][col])
+            max = Math.max(max, 1 + howManyForThis(arr, row + 1, col, num));
+
+        if (isValidPlace(arr, row - 1, col) && arr[row][col] + num == arr[row - 1][col])
+            max = Math.max(max, 1 + howManyForThis(arr, row - 1, col, num));
+
+        return max;
+
+    }
+
+    public static int longestSlope(int[][] arr, int num) {
+        return longestSlope(arr, 0, 0, num);
+    }
+
+    private static boolean isValidPlace(int[][] arr, int row, int col) {
+        return row > -1 && col > -1 && row < arr.length && col < arr[0].length;
+    }
+
+    // ***************************************** 2009B ************************************************* //
+
+    public static boolean samePattern (String s1, String s2) {
+        if (s1.length() == 0 && s2.length() == 0 || s1.length() == 0 && s2.length() == 1 && s2.charAt(0) == '*')
+            return true;
+
+        if (s2.length() == 0 || s1.length() == 0)
+            return false;
+
+        if (s1.charAt(0) != s2.charAt(0) && s2.charAt(0) != '*')
+            return false;
+
+
+        return samePattern(s1.substring(1), s2.substring(1)) || (samePattern(s1.substring(1), s2) && s2.charAt(0) == '*');
+    }
 
 
 }
