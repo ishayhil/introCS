@@ -1,5 +1,3 @@
-import jdk.nashorn.internal.ir.IndexNode;
-
 /**
  * Created by ishayhilzenrat on 12/06/2018.
  */
@@ -94,6 +92,8 @@ public class BigNumber {
         }
         if (add > 0)
             tempNew.setNext(new IntNode(add, null)); // adding the last 'add' digit if exists
+
+        b.removeZero(b.head);
         return b;
     }
 
@@ -172,11 +172,12 @@ public class BigNumber {
         IntNode tempB = b.head;
 
         while (big.getNext() != null) {
-            int bigV = big.getNext().getValue() - toSubtract;
+            int bigV = big.getNext().getValue();
             int smallV = small.getNext() != null ? small.getNext().getValue() : 0;
 
-            result = bigV - smallV;
+            result = bigV - smallV - toSubtract;
 
+            toSubtract = 0;
             if (result < 0) {
                 result += 10;
                 toSubtract = 1;
@@ -218,40 +219,48 @@ public class BigNumber {
         BigNumber b = new BigNumber();
         int tens = 0;
 
-        if (other == null)
+        if (other == null || other.head == null)
             return new BigNumber(this);
 
-        IntNode tempThis = head;
+        IntNode tempOther = other.head;
 
-        while (tempThis != null) {
-            BigNumber temp = multiple(tempThis.getValue(), other);
+        while (tempOther != null) {
+            BigNumber temp = multiple(tempOther.getValue());
+            temp.addZeros(tens);
 
-            b = b.addBigNumber(temp.multiple((int) Math.pow(10, tens), temp));
+            b = b.addBigNumber(temp);
             tens += 1;
 
-            tempThis = tempThis.getNext();
+            tempOther = tempOther.getNext();
         }
         return b;
     }
 
-    public BigNumber multiple(int x, BigNumber y) {
+    private void addZeros(int n) {
+        while (n != 0) {
+            head = new IntNode(0, head);
+            n--;
+        }
+    }
+
+    public BigNumber multiple(int x) {
         BigNumber b = new BigNumber();
         IntNode tempB = b.head;
-        IntNode tempY = y.head;
+        IntNode tempThis = this.head;
 
-        int result = tempY.getValue() * x;
+        int result = tempThis.getValue() * x;
         int add = result / 10;
         tempB.setValue(result % 10);
 
-        while (tempY.getNext() != null) {
-            int valY = tempY.getNext().getValue();
+        while (tempThis.getNext() != null) {
+            int valY = tempThis.getNext().getValue();
 
             result = valY * x + add;
 
             tempB.setNext(new IntNode(result % 10, null));
             add = result / 10;
 
-            tempY = tempY.getNext();
+            tempThis = tempThis.getNext();
             tempB = tempB.getNext();
         }
 
