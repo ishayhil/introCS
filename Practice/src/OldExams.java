@@ -327,7 +327,7 @@ public class OldExams {
 
     // ***************************************** 2009B ************************************************* //
 
-    public static boolean samePattern (String s1, String s2) {
+    public static boolean samePattern(String s1, String s2) {
         if (s1.length() == 0 && s2.length() == 0 || s1.length() == 0 && s2.length() == 1 && s2.charAt(0) == '*')
             return true;
 
@@ -339,6 +339,33 @@ public class OldExams {
 
 
         return samePattern(s1.substring(1), s2.substring(1)) || (samePattern(s1.substring(1), s2) && s2.charAt(0) == '*');
+    }
+
+    public static boolean isPythagorean(int[] arr) {
+        int left = 0;
+        int right = arr.length - 1;
+        int middle = right - 1;
+
+        while (right != middle) {
+            int a = arr[left] * arr[left];
+            int b = arr[middle] * arr[middle];
+            int c = arr[right] * arr[right];
+
+            if (a + b == c)
+                return true;
+
+            if (a + b > c)
+                middle--;
+            else
+                left++;
+
+            if (left == middle) {
+                right--;
+                left = 0;
+                middle = right - 1;
+            }
+        }
+        return false;
     }
 
 
