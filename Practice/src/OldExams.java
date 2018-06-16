@@ -416,7 +416,7 @@ public class OldExams {
             return;
         }
 
-        System.out.print(arr[i]);
+        System.out.print(arr[i] + " ");
 
         prinArr(arr, i + 1);
     }
@@ -549,5 +549,46 @@ public class OldExams {
         }
         return -1;
     }
+
+    // ********************************************** 2015A 91B ******************************************** //
+    private static int makeSum(int[] lengths, int k, int num, int i) {
+        if (i == lengths.length || num < 0 || k < 0)
+            return 0;
+
+        if (k == 0 && num == 0)
+            return 1;
+
+        return makeSum(lengths, k - lengths[i], num - 1, i) + makeSum(lengths, k, num, i + 1);
+    }
+
+    public static int makeSum(int[] lengths, int k, int num) {
+        return makeSum(lengths, k, num, 0);
+    }
+
+    public static int[] crossSort(int[] arr) { // O(2n) = O(n)
+        int leftPointerOdd = 1;
+        int rightPointerOdd = (arr.length - 1) % 2 == 0 ? arr.length - 2 : arr.length - 1;
+
+        while (leftPointerOdd < rightPointerOdd) { // O(n)
+            int lowestOdd = arr[rightPointerOdd];
+            arr[rightPointerOdd] = arr[leftPointerOdd];
+            arr[leftPointerOdd] = lowestOdd;
+
+            leftPointerOdd += 2;
+            rightPointerOdd -= 2;
+        }
+
+        for (int i = 0; i < arr.length - 1; i++) { // O(n)
+            if (arr[i] > arr[i + 1]) {
+                int temp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = temp;
+            }
+        }
+
+        return arr;
+    }
+
+
 
 }
