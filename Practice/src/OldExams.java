@@ -341,6 +341,8 @@ public class OldExams {
         return samePattern(s1.substring(1), s2.substring(1)) || (samePattern(s1.substring(1), s2) && s2.charAt(0) == '*');
     }
 
+    // ****************************************************************************************** //
+
     public static boolean isPythagorean(int[] arr) {
         int left = 0;
         int right = arr.length - 1;
@@ -368,5 +370,184 @@ public class OldExams {
         return false;
     }
 
+    // ****************************************************************************************** //
+
+    private static boolean splitEqualMult(int[] arr, int i, int sum1, int sum2) {
+        if (i == arr.length) {
+
+            if (sum1 == sum2)
+                return true;
+
+            return false;
+        }
+        return splitEqualMult(arr, i + 1, sum1 * arr[i], sum2) ||
+                splitEqualMult(arr, i + 1, sum1, sum2 * arr[i]);
+    }
+
+    public static boolean splitEqualMult(int[] arr) {
+        return splitEqualMult(arr, 0, 1, 1);
+    }
+
+    private static int calculateRemaining(int[] arr, int i) {
+        if (i == arr.length)
+            return 1;
+
+        return arr[i] * calculateRemaining(arr, i + 1);
+    }
+
+    private static void mirror(int[] arr, int i) {
+        if (i < arr.length / 2) {
+            int[] temp = copyArr(arr, new int[arr.length]);
+            temp[arr.length - 1 - i] = arr[i];
+            temp[i] = arr[arr.length - 1 - i];
+
+            mirror(temp, i + 1);
+
+            prinArr(temp);
+
+            mirror(arr, i + 1);
+        } else
+            prinArr(arr);
+    }
+
+    private static void prinArr(int[] arr, int i) {
+        if (i == arr.length) {
+            System.out.println();
+            return;
+        }
+
+        System.out.print(arr[i]);
+
+        prinArr(arr, i + 1);
+    }
+
+    private static void prinArr(int[] arr) {
+        prinArr(arr, 0);
+    }
+
+    private static int[] copyArr(int[] arr, int i, int[] new_arr) {
+        if (i == arr.length)
+            return new_arr;
+
+        new_arr[i] = arr[i];
+
+        return copyArr(arr, i + 1, new_arr);
+    }
+
+    private static int[] copyArr(int[] arr, int[] other) {
+        return copyArr(arr, 0, other);
+    }
+
+
+    public static void mirror(int[] arr) {
+        mirror(arr, 0);
+    }
+
+    private static int movesOfKnight(int[][] mat, int kingRow, int kingCol, int currentRow, int currentCol, int runs, int[][] places) {
+        if (!isValidPlace(mat, currentRow, currentCol) || mat[currentRow][currentCol] == 1)
+            return 0;
+
+        if (currentRow == kingRow && currentCol == kingCol) {
+//            System.out.println("return" + runs);
+            return runs;
+        }
+
+        mat[currentRow][currentCol] = 1;
+
+        int up = minNoZero(movesOfKnight(mat, kingRow, kingCol, currentRow - 2, currentCol + 1, runs + 1, places),
+                movesOfKnight(mat, kingRow, kingCol, currentRow - 2, currentCol - 1, runs + 1, places));
+
+        int down = minNoZero(movesOfKnight(mat, kingRow, kingCol, currentRow + 2, currentCol + 1, runs + 1, places),
+                movesOfKnight(mat, kingRow, kingCol, currentRow + 2, currentCol - 1, runs + 1, places));
+
+        int left = minNoZero(movesOfKnight(mat, kingRow, kingCol, currentRow + 1, currentCol - 2, runs + 1, places),
+                movesOfKnight(mat, kingRow, kingCol, currentRow - 1, currentCol - 2, runs + 1, places));
+
+        int right = minNoZero(movesOfKnight(mat, kingRow, kingCol, currentRow + 1, currentCol + 2, runs + 1, places),
+                movesOfKnight(mat, kingRow, kingCol, currentRow - 1, currentCol + 2, runs + 1, places));
+
+        int a = minNoZero(up, down);
+        int b = minNoZero(left, right);
+
+        mat[currentRow][currentCol] = 0;
+        return minNoZero(a, b);
+    }
+
+    public static int movesOfKnight(int[][] mat, int kingRow, int kingCol, int knighRow, int knightCol) {
+        int[][] places = new int[mat.length][mat[0].length];
+        return movesOfKnight(mat, kingRow, kingCol, knighRow, knightCol, 0, places);
+    }
+
+    private static int minNoZero(int a, int b) {
+        if (a == 0)
+            return b;
+        if (b == 0)
+            return a;
+
+        if (a > b)
+            return b;
+        else
+            return a;
+    }
+
+    // ***************************************** 2012A A2 ************************************************* //
+    private static boolean isSumOf(int[] arr, int i, int sumToFind, String s) {
+        if (i == arr.length || sumToFind < 0)
+            return false;
+
+        if (sumToFind == 0) {
+            System.out.println(s);
+            return true;
+        }
+
+        return isSumOf(arr, i, sumToFind - arr[i], s + arr[i] + " ") | isSumOf(arr, i + 1, sumToFind, s);
+    }
+
+    public static boolean isSumOf(int[] arr, int n) {
+        return isSumOf(arr, 0, n, "");
+    }
+
+    public static int count(int[] arr, int n) { // O(log(n))
+        int leftInd = searchIndex(arr, n, true); // logn
+        int rightInd = searchIndex(arr, n, false); // logn
+
+        if (leftInd == -1 && rightInd == -1)
+            return 0;
+        if (leftInd == -1 || rightInd == -1)
+            return 1;
+
+        return rightInd - leftInd + 1;
+    }
+
+    private static int searchIndex(int[] arr, int n, boolean isLeftSide) { // logn
+        int left = 0;
+        int right = arr.length - 1;
+
+        while (right >= left) { // binary search implementation
+            int m = (left + right) / 2;
+            boolean isEdge = (m == arr.length - 1 || m == 0);
+
+            if (arr[m] == n) {
+                if (m == 0 && isLeftSide || m == arr.length - 1 && !isLeftSide)
+                    return m;
+
+                if (!isEdge && arr[m] > arr[m - 1] && isLeftSide)
+                    return m;
+                if (!isEdge && arr[m] < arr[m + 1] && !isLeftSide)
+                    return m;
+
+                if (isLeftSide)
+                    right = m - 1;
+                else
+                    left = m + 1;
+            }
+
+            if (arr[m] > n)
+                right = m - 1;
+            else
+                left = m + 1;
+        }
+        return -1;
+    }
 
 }
