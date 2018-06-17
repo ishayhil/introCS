@@ -615,7 +615,7 @@ public class OldExams {
         int left = 0;
         int right = first.length - 1;
 
-        int closest = 0;
+        int closest = Math.abs(x - (first[right] + second[left]));
         int a = 0;
         int b = 0;
 
@@ -625,8 +625,8 @@ public class OldExams {
                 return;
             }
 
-            if (Math.abs(x - first[right] + second[left]) < closest) {
-                closest = Math.abs(x - first[right] + second[left]);
+            if (Math.abs(x - (first[right] + second[left])) < closest) {
+                closest = Math.abs(x - (first[right] + second[left]));
                 a = first[right];
                 b = second[left];
             }
