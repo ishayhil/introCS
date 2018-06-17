@@ -578,13 +578,35 @@ public class OldExams {
             rightPointerOdd -= 2;
         }
 
-        for (int i = 0; i < arr.length - 1; i++) { // O(n)
-            if (arr[i] > arr[i + 1]) {
-                int temp = arr[i];
-                arr[i] = arr[i + 1];
-                arr[i + 1] = temp;
+        prinArr(arr);
+
+        int left = 0;
+        int right = (arr.length - 1) % 2 == 0 ? arr.length - 1 : arr.length - 2;
+        int temp;
+        while (left <= right) { // O(n)
+            if (arr[left] > arr[left + 1]) {
+                temp = arr[left];
+                arr[left] = arr[left + 1];
+                arr[left + 1] = temp;
             }
+
+            if (arr[left] < arr[left - 1]) {
+                temp = arr[left];
+                arr[left] = arr[left - 1];
+                arr[left - 1] = temp;
+            }
+
+            if (arr[left] > arr[right]) {
+                temp = arr[left];
+                arr[left] = arr[right];
+                arr[right] = temp;
+            }
+
+            left++;
+            right--;
         }
+
+        prinArr(arr);
         return arr;
     }
 
@@ -603,8 +625,8 @@ public class OldExams {
                 return;
             }
 
-            if (Math.abs(x - first[right] + second[left]) > closest) {
-                closest = first[right] + second[left];
+            if (Math.abs(x - first[right] + second[left]) < closest) {
+                closest = Math.abs(x - first[right] + second[left]);
                 a = first[right];
                 b = second[left];
             }
@@ -630,5 +652,42 @@ public class OldExams {
         return sum + 1;
     }
 
+    private static int c(int[][] mat, int sum, int row, int col, int maxSum) {
+        if (row > mat.length - 1 || col > mat[0].length - 1)
+            return smallestNum(mat, 0, 0, 0) * mat.length * mat[0].length;
+
+        if (row == mat.length - 1 && col == mat[0].length - 1) {
+            return maxSum;
+        }
+
+        if (sum + mat[row][col] < maxSum)
+            maxSum = sum + mat[row][col];
+
+        return Math.max(
+                c(mat, sum + mat[row][col], row + 1, col, maxSum),
+                c(mat, sum + mat[row][col], row, col + 1, maxSum)
+        );
+    }
+
+    public static int c(int[][] mat) {
+        int v = c(mat, 0, 0, 0, 0);
+
+        return v > 0 ? 0 : v * -1 + 1;
+    }
+
+    private static int smallestNum(int[][] mat, int row, int col, int min) {
+        if (col == mat[0].length) {
+            row++;
+            col = 0;
+        }
+
+        if (row == mat.length)
+            return min;
+
+        if (min > mat[row][col])
+            min = mat[row][col];
+
+        return smallestNum(mat, row, col + 1, min);
+    }
 
 }
