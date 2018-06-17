@@ -565,7 +565,7 @@ public class OldExams {
         return makeSum(lengths, k, num, 0);
     }
 
-    public static int[] crossSort(int[] arr) { // O(2n) = O(n)
+    public static int[] crossSort(int[] arr) { // time: O(2n) = O(n). space: O(n).
         int leftPointerOdd = 1;
         int rightPointerOdd = (arr.length - 1) % 2 == 0 ? arr.length - 2 : arr.length - 1;
 
@@ -577,37 +577,27 @@ public class OldExams {
             leftPointerOdd += 2;
             rightPointerOdd -= 2;
         }
-
         prinArr(arr);
+        int[] tmp = new int[arr.length];
+        int iEven = 0, iOdd = 1;
 
-        int left = 0;
-        int right = (arr.length - 1) % 2 == 0 ? arr.length - 1 : arr.length - 2;
-        int temp;
-        while (left <= right) { // O(n)
-            if (arr[left] > arr[left + 1]) {
-                temp = arr[left];
-                arr[left] = arr[left + 1];
-                arr[left + 1] = temp;
+        for (int i = 0; i < arr.length; i++) { // merge sort implementation.
+            if (iEven > arr.length - 1) {
+                tmp[i] = arr[iOdd];
+                iOdd += 2;
+            } else if (iOdd > arr.length - 1) {
+                tmp[i] = arr[iEven];
+                iEven += 2;
+            } else if (arr[iEven] < arr[iOdd]) {
+                tmp[i] = arr[iEven];
+                iEven += 2;
+            } else {
+                tmp[i] = arr[iOdd];
+                iOdd += 2;
             }
-
-            if (arr[left] < arr[left - 1]) {
-                temp = arr[left];
-                arr[left] = arr[left - 1];
-                arr[left - 1] = temp;
-            }
-
-            if (arr[left] > arr[right]) {
-                temp = arr[left];
-                arr[left] = arr[right];
-                arr[right] = temp;
-            }
-
-            left++;
-            right--;
         }
-
-        prinArr(arr);
-        return arr;
+        prinArr(tmp);
+        return tmp;
     }
 
 
@@ -688,6 +678,39 @@ public class OldExams {
             min = mat[row][col];
 
         return smallestNum(mat, row, col + 1, min);
+    }
+
+    static private boolean covers(int[][] mat, int[] arr, int k, int col, int row, int itemsToFind) {
+        if (row == arr.length || k == 0)
+            return false;
+
+        if (itemsToFind == 0)
+            return true;
+
+        if (col == arr.length) {
+            col = 0;
+            row++;
+            k--;
+        }
+
+        if (checkRow(arr[col], mat, row, 0))
+            itemsToFind--;
+
+        return covers(mat, arr, k, col + 1, row, itemsToFind);
+    }
+
+    static private boolean checkRow(int x, int[][] mat, int row, int col) {
+        if (col == mat[0].length)
+            return false;
+
+        if (mat[row][col] == x)
+            return true;
+
+        return checkRow(x, mat, row, col + 1);
+    }
+
+    public static boolean covers(int[] arr, int[][] mat, int k) {
+        return covers(mat, arr, k, 0, 0, arr.length);
     }
 
 }
