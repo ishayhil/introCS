@@ -585,10 +585,50 @@ public class OldExams {
                 arr[i + 1] = temp;
             }
         }
-
         return arr;
     }
 
+
+    public static void printClosest(int[] first, int[] second, int x) {
+        int left = 0;
+        int right = first.length - 1;
+
+        int closest = 0;
+        int a = 0;
+        int b = 0;
+
+        while (left < second.length && right > -1) {
+            if (first[right] + second[left] == x) {
+                System.out.println(a + " AND " + b);
+                return;
+            }
+
+            if (Math.abs(x - first[right] + second[left]) > closest) {
+                closest = first[right] + second[left];
+                a = first[right];
+                b = second[left];
+            }
+
+            if (first[right] + second[left] > x) {
+                right--;
+            } else
+                left++;
+        }
+        System.out.println(a + " AND " + b);
+    }
+
+    // ********************************************** 2017A 90B ******************************************** //
+
+    public static int findSmallest(int[] arr) {
+        int sum = 0;
+
+        for (int i = 0; i < arr.length; i++) { // O(n)
+            if (arr[i] - sum > 1)
+                return sum + 1;
+            sum += arr[i];
+        }
+        return sum + 1;
+    }
 
 
 }
