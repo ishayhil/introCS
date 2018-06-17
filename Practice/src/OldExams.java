@@ -600,7 +600,6 @@ public class OldExams {
         return tmp;
     }
 
-
     public static void printClosest(int[] first, int[] second, int x) {
         int left = 0;
         int right = first.length - 1;
