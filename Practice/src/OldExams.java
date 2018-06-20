@@ -679,12 +679,18 @@ public class OldExams {
         return smallestNum(mat, row, col + 1, min);
     }
 
-    static private boolean covers(int[][] mat, int[] arr, int k, int col, int row, int itemsToFind) {
-        if (row == arr.length || k == 0)
+    static private boolean covers(int[][] mat, int[] arr, int k, int row, int col, int itemsToFind) {
+        if (itemsToFind == 0 && k > 0)
+            return true;
+
+        if (k == 0 || row == mat.length)
             return false;
 
-        if (itemsToFind == 0)
-            return true;
+        int i = checkRow(mat[row][col], arr, 0);
+        if (i != -1) {
+            itemsToFind--;
+            arr[i] *= -1;
+        }
 
         if (col == arr.length) {
             col = 0;
@@ -692,24 +698,226 @@ public class OldExams {
             k--;
         }
 
-        if (checkRow(arr[col], mat, row, 0))
-            itemsToFind--;
+        boolean a = covers(mat, arr, k, row, col + 1, itemsToFind);
+//       arr[i] *= -1;
+        col = -1;
+        boolean b = covers(mat, arr, k, row + 1, col + 1, itemsToFind);
 
-        return covers(mat, arr, k, col + 1, row, itemsToFind);
+        return a || b;
     }
 
-    static private boolean checkRow(int x, int[][] mat, int row, int col) {
-        if (col == mat[0].length)
-            return false;
+    static private int checkRow(int x, int[] arr, int i) {
+        if (i == arr.length)
+            return -1;
 
-        if (mat[row][col] == x)
-            return true;
+        if (arr[i] == x)
+            return i;
 
-        return checkRow(x, mat, row, col + 1);
+        return checkRow(x, arr, i + 1);
     }
 
     public static boolean covers(int[] arr, int[][] mat, int k) {
         return covers(mat, arr, k, 0, 0, arr.length);
     }
 
+    private static void fillHadamard(int[][] mat, int n, int row, int col) {
+        if (n == 1) {
+            mat[row][col] = 1;
+            return;
+        }
+
+        fillHadamard(mat, n - 1, row, col);
+
+        fillQuarters(mat, row, col, n);
+    }
+
+    private static void fillQuarters(int[][] mat, int row, int col, int n) {
+        if (col == n / 2) {
+            row++;
+            col = 0;
+        }
+
+        if (row == n / 2)
+            return;
+
+        mat[row][col + n / 2] = mat[row][col]; // right upper quarter
+        mat[row + n / 2][col] = mat[row][col]; // left bottom quarter
+        mat[row + n / 2][col + n / 2] = mat[row][col] * -1; // left bottom quarter
+
+        fillQuarters(mat, row, col + 1, n);
+    }
+
+    public static void fillHadamard(int[][] mat, int n) {
+        fillHadamard(mat, n, 0, 0);
+        printMat(mat);
+    }
+
+    private static void printMat(int[][] mat) {
+        for (int i = 0; i < mat.length; i++) {
+            for (int j = 0; j < mat[0].length; j++)
+                System.out.print(mat[i][j] + " ");
+            System.out.println();
+        }
+    }
+
+    public static int alternating(String s) {
+        int sum1 = 0;
+        int sum2 = 0;
+        for (int i = 0; i < s.length(); i += 2) {
+            if (s.charAt(i) == '1')
+                sum1++;
+            else if (s.charAt(i) == '0')
+                sum2++;
+        }
+        return Math.min(sum1, sum2);
+    }
+
+    private static void printArray(boolean[][] arr) {
+        for (boolean[] a : arr) {
+            for (boolean b : a)
+                System.out.print((b ? 1 : 0) + " ");
+            System.out.println();
+        }
+    }
+
+    private static int oneFiveSever(int n, int cnt) {
+        if (n == 0)
+            return cnt;
+        if (n < 0)
+            return -1;
+
+
+        int a = oneFiveSever(n - 1, cnt + 1);
+        int b = oneFiveSever(n - 5, cnt + 1);
+        int c = oneFiveSever(n - 7, cnt + 1);
+
+        return min(min(a, b), c);
+    }
+
+    public static int oneFiveSever(int n) {
+        return oneFiveSever(n, 0);
+    }
+
+    private static int min(int a, int b) {
+        if (a < 0 && b < 0)
+            return -1;
+        if (a < 0)
+            return b;
+        if (b < 0)
+            return a;
+
+        if (a < b)
+            return a;
+        return b;
+    }
+
+    public static int maximalDrop(int[] arr) {
+        int maxDrop = 0;
+        int maxHill = arr[0];
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] > maxHill)
+                maxHill = arr[i];
+
+            else if (maxHill - arr[i] > maxDrop)
+                maxDrop = maxHill - arr[i];
+        }
+        return maxDrop;
+    }
+
+
+    // ********************************************** 2018 ******************************************** //
+
+
+    public static int smallestSub(int[] arr, int x) {
+        int total = 0;
+        for (int i = 0; i < arr.length; i++)
+            total += arr[i];
+
+        int left = 0;
+        int right = arr.length - 1;
+        int min;
+        if (x > total)
+            return arr.length + 1;
+        else
+            min = arr.length;
+
+        while (left < right) {
+            if (total - arr[right] - arr[left] > x) {
+                min -= 2;
+                total -= (arr[right] + arr[left]);
+                left++;
+                right--;
+            } else if (total - arr[right] > x) {
+                min--;
+                total -= arr[right];
+                right--;
+            } else if (total - arr[left] > x) {
+                min--;
+                total -= arr[left];
+                left++;
+            } else
+                return min;
+        }
+        return min;
+    }
+
+
+    public static int howManySorted(int n, int max, int min) {
+        if (n == 0)
+            return 1;
+
+        if (min == max + 1)
+            return 0;
+
+        int a = howManySorted(n, max, min + 1);
+        int b = howManySorted(n - 1, max, min);
+
+        return a + b;
+    }
+
+    public static boolean what(int[] arr, int x) {
+        int total = 0;
+        for (int i = 0; i < arr.length; i++)
+            total += arr[i];
+
+        if (total < x)
+            return false;
+
+        int left = 0, right = arr.length - 1;
+
+        while (left < right && total != x) {
+            if (total - (arr[right] + arr[left]) >= x) {
+                total -= (arr[right] + arr[left]);
+                left++;
+                right--;
+            } else if (total - arr[right] >= x) {
+                total -= arr[right];
+                right--;
+            } else if (total - arr[left] >= x) {
+                total -= arr[left];
+                left++;
+            } else
+                return false;
+        }
+        return total == x;
+    }
+
+
+    private static int cheapestRoute(int[] arr, int i, int sum) {
+        if (sum == 49)
+            System.out.println();
+
+        if (i > arr.length - 1)
+            return -1;
+
+        if (i == arr.length - 1)
+            return sum + arr[i];
+
+        return min(cheapestRoute(arr, i + 1, sum + arr[i]), cheapestRoute(arr, i + 2, sum + arr[i]));
+    }
+
+    public static int cheapestRoute(int[] arr) {
+        return cheapestRoute(arr, 0, 0);
+    }
 }
