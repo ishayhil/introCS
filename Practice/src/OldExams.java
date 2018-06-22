@@ -128,7 +128,7 @@ public class OldExams {
 
     // ***************************************** 2013B moed A ************************************************* //
 
-    public static boolean balancedPartition(int[] arr) {
+    public static boolean balancedPartition1(int[] arr) {
         int sumToFind = sumArr(arr, 0);
         if (sumToFind % 2 != 0)
             return false;
@@ -443,7 +443,7 @@ public class OldExams {
         mirror(arr, 0);
     }
 
-    private static int movesOfKnight(int[][] mat, int kingRow, int kingCol, int currentRow, int currentCol, int runs, int[][] places) {
+    private static int minChess(int[][] mat, int kingRow, int kingCol, int currentRow, int currentCol, int runs, int[][] places) {
         if (!isValidPlace(mat, currentRow, currentCol) || mat[currentRow][currentCol] == 1)
             return 0;
 
@@ -454,17 +454,17 @@ public class OldExams {
 
         mat[currentRow][currentCol] = 1;
 
-        int up = minNoZero(movesOfKnight(mat, kingRow, kingCol, currentRow - 2, currentCol + 1, runs + 1, places),
-                movesOfKnight(mat, kingRow, kingCol, currentRow - 2, currentCol - 1, runs + 1, places));
+        int up = minNoZero(minChess(mat, kingRow, kingCol, currentRow - 2, currentCol + 1, runs + 1, places),
+                minChess(mat, kingRow, kingCol, currentRow - 2, currentCol - 1, runs + 1, places));
 
-        int down = minNoZero(movesOfKnight(mat, kingRow, kingCol, currentRow + 2, currentCol + 1, runs + 1, places),
-                movesOfKnight(mat, kingRow, kingCol, currentRow + 2, currentCol - 1, runs + 1, places));
+        int down = minNoZero(minChess(mat, kingRow, kingCol, currentRow + 2, currentCol + 1, runs + 1, places),
+                minChess(mat, kingRow, kingCol, currentRow + 2, currentCol - 1, runs + 1, places));
 
-        int left = minNoZero(movesOfKnight(mat, kingRow, kingCol, currentRow + 1, currentCol - 2, runs + 1, places),
-                movesOfKnight(mat, kingRow, kingCol, currentRow - 1, currentCol - 2, runs + 1, places));
+        int left = minNoZero(minChess(mat, kingRow, kingCol, currentRow + 1, currentCol - 2, runs + 1, places),
+                minChess(mat, kingRow, kingCol, currentRow - 1, currentCol - 2, runs + 1, places));
 
-        int right = minNoZero(movesOfKnight(mat, kingRow, kingCol, currentRow + 1, currentCol + 2, runs + 1, places),
-                movesOfKnight(mat, kingRow, kingCol, currentRow - 1, currentCol + 2, runs + 1, places));
+        int right = minNoZero(minChess(mat, kingRow, kingCol, currentRow + 1, currentCol + 2, runs + 1, places),
+                minChess(mat, kingRow, kingCol, currentRow - 1, currentCol + 2, runs + 1, places));
 
         int a = minNoZero(up, down);
         int b = minNoZero(left, right);
@@ -473,9 +473,9 @@ public class OldExams {
         return minNoZero(a, b);
     }
 
-    public static int movesOfKnight(int[][] mat, int kingRow, int kingCol, int knighRow, int knightCol) {
+    public static int minChess(int[][] mat, int kingRow, int kingCol, int knighRow, int knightCol) {
         int[][] places = new int[mat.length][mat[0].length];
-        return movesOfKnight(mat, kingRow, kingCol, knighRow, knightCol, 0, places);
+        return minChess(mat, kingRow, kingCol, knighRow, knightCol, 0, places);
     }
 
     private static int minNoZero(int a, int b) {
@@ -887,14 +887,16 @@ public class OldExams {
         int left = 0, right = arr.length - 1;
 
         while (left < right && total != x) {
-            if (total - (arr[right] + arr[left]) >= x) {
+            if (total - (arr[right] + arr[left]) == x || total - arr[right] == x || total - arr[left] == x)
+                return true;
+            if (total - (arr[right] + arr[left]) > x) {
                 total -= (arr[right] + arr[left]);
                 left++;
                 right--;
-            } else if (total - arr[right] >= x) {
+            } else if (total - arr[right] > x) {
                 total -= arr[right];
                 right--;
-            } else if (total - arr[left] >= x) {
+            } else if (total - arr[left] > x) {
                 total -= arr[left];
                 left++;
             } else
@@ -920,4 +922,137 @@ public class OldExams {
     public static int cheapestRoute(int[] arr) {
         return cheapestRoute(arr, 0, 0);
     }
+
+    private static int where(int[] arr, int left, int right, int m) {
+        if (m == arr.length)
+            return -1;
+
+        if (sumA(arr, left, m - 1, 0) == sumA(arr, m, right, 0))
+            return m;
+
+        return where(arr, left, right, m + 1);
+    }
+
+    public static int where(int[] arr) {
+        return where(arr, 0, arr.length - 1, 1);
+    }
+
+    private static int shortestPath(int[][] mat, int row, int col, int lastVal, int path) {
+        if (row >= mat.length || row <= -1 || col <= -1 || col >= mat[0].length || lastVal > mat[row][col] || mat[row][col] == -1)
+            return -1;
+
+        if (row == mat.length - 1 && col == mat[0].length - 1)
+            return path;
+
+        int temp = mat[row][col];
+        mat[row][col] = -1;
+
+        int a = min(shortestPath(mat, row + 1, col, temp, path + 1),
+                shortestPath(mat, row, col + 1, temp, path + 1));
+        int b = min(shortestPath(mat, row - 1, col, temp, path + 1),
+                shortestPath(mat, row, col - 1, temp, path + 1));
+
+        return min(a, b);
+    }
+
+    public static int shortestPath(int[][] mat) {
+        return shortestPath(mat, 0, 0, -1, 1);
+    }
+
+
+    private static int longOrdNum(String s, int longest, int last, int cnt) {
+        if (s.length() == 0)
+            return longest;
+
+        if (s.charAt(0) > '9' || s.charAt(0) <= last)
+            cnt = 0;
+
+        if (s.charAt(0) <= '9' && s.charAt(0) > last)
+            cnt++;
+
+        if (cnt > longest)
+            longest = cnt;
+
+        return longOrdNum(s.substring(1), longest, s.charAt(0), cnt);
+    }
+
+    public static int longOrdNum(String s) {
+        return longOrdNum(s, 0, 0, 0);
+    }
+
+    private static boolean balancedPartition(int[] arr, int i, int sum1, int sum2, int cnt1, int cnt2) {
+        if (i == arr.length) {
+            if (cnt1 == cnt2 && sum1 == sum2)
+                return true;
+
+            return false;
+        }
+        return balancedPartition(arr, i + 1, sum1 + arr[i], sum2, cnt1 + 1, cnt2) ||
+                balancedPartition(arr, i + 1, sum1, sum2 + arr[i], cnt1, cnt2 + 1);
+    }
+
+    public static boolean balancedPartition(int[] arr) {
+        return balancedPartition(arr, 0, 0, 0, 0, 0);
+    }
+
+    public static int included(int x, int y) {
+        int[] temp = new int[10];
+
+        while (y != 0) {
+            temp[y % 10]++;
+            y /= 10;
+        }
+
+        int[] temp2 = new int[10];
+        while (x != 0) {
+            int val = x % 10;
+            if (temp[val] == 0)
+                temp2[val]++;
+            x /= 10;
+        }
+
+        int cnt = 0;
+        for (int i = 0; i < 10; i++)
+            if (temp2[i] != 0)
+                cnt++;
+
+        return cnt;
+    }
+
+    private static int count(int sum, int left) {
+        if (sum == 0)
+            return 1;
+
+        if (sum < 0 || left == 0)
+            return 0;
+
+        return count(sum - left, left - 1) + count(sum, left - 1);
+    }
+
+    public static int count(int sum) {
+        return count(sum, sum);
+    }
+
+    private static int countRopesForVal(int[][] mat, int row, int col) {
+        if (row == mat.length || col == 0 || col == mat[0].length)
+            return 0;
+
+        if (row == mat.length - 1)
+            return 1;
+
+        return countRopesForVal(mat, row + 1, col + 1) + countRopesForVal(mat, row + 1, col - 1) +
+                countRopesForVal(mat, row + 1, col);
+    }
+
+    private static int countRopes(int[][] mat, int row, int col) {
+        if (col == mat[0].length)
+            return 0;
+
+        return countRopesForVal(mat, row, col) + countRopes(mat, row, col + 1);
+    }
+
+    public static int countRopes(int[][] mat) {
+        return countRopes(mat, 0, 0);
+    }
+
 }
