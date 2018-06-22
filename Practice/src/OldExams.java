@@ -1055,4 +1055,47 @@ public class OldExams {
         return countRopes(mat, 0, 0);
     }
 
+    private static int minDiff1(int[] arr, int i, int sum1, int sum2) {
+        if (i == arr.length)
+            return Math.abs(sum1 - sum2);
+
+        return Math.min(minDiff1(arr, i + 1, sum1 + arr[i], sum2),
+                minDiff1(arr, i + 1, sum1, sum2 + arr[i]));
+    }
+
+    public static int minDiff1(int[] arr) {
+        return minDiff1(arr, 0, 0, 0);
+    }
+
+    public static void sortMod(int[] arr, int k) {
+        int sortedCnt = 0;
+
+        prinArr(arr);
+
+        for (int i = 0; i < k; i++)
+            for (int j = sortedCnt; j < arr.length; j++)
+                if (arr[j] % k == i) {
+                    swi(arr, sortedCnt, j);
+                    sortedCnt++;
+                }
+
+        prinArr(arr);
+    }
+
+    private static void swi(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    public static int lcs(String s, String t) {
+        if (t.length() == 0 || s.length() == 0)
+            return 0;
+
+        if (t.charAt(0) == s.charAt(0))
+            return 1 + lcs(s.substring(1), t.substring(1));
+
+        return Math.max(lcs(s.substring(1), t), lcs(s, t.substring(1)));
+    }
+
 }
