@@ -909,9 +909,6 @@ public class OldExams {
 
 
     private static int cheapestRoute(int[] arr, int i, int sum) {
-        if (sum == 49)
-            System.out.println();
-
         if (i > arr.length - 1)
             return -1;
 
@@ -1222,4 +1219,41 @@ public class OldExams {
         }
     }
 
+    private static int longestFlat(int[] arr, int i, int max) {
+        if (i == arr.length)
+            return max;
+
+        int current = lengthFlatSequence(arr, i + 1, arr[i], 0, 0) + 1;
+        if (current > max)
+            max = current;
+
+        return longestFlat(arr, i + 1, max);
+    }
+
+    private static int lengthFlatSequence(int[] arr, int i, int num, int isUp, int cnt) {
+        if (i == arr.length)
+            return cnt;
+
+        if (arr[i] == num || num == arr[i] + 1 && isUp == 1 || num == arr[i] - 1 && isUp == -1)
+            cnt++;
+        else if (arr[i] != num) {
+            if (num == arr[i] + 1 && isUp == 0) {
+                isUp = 1;
+                cnt++;
+            }
+            else if (num == arr[i] - 1 && isUp == 0) {
+                isUp = -1;
+                cnt++;
+            }
+            else
+                return cnt;
+        }
+
+        return lengthFlatSequence(arr, i + 1, num, isUp, cnt);
+    }
+
+    public static int longestFlat(int[] arr) {
+        return longestFlat(arr, 0, 0);
+    }
 }
+
