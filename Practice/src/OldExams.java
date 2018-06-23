@@ -1,3 +1,5 @@
+import jdk.nashorn.internal.ir.IndexNode;
+
 /**
  * OpenUniversity old intoToCs exams solved questions.
  *
@@ -1087,6 +1089,7 @@ public class OldExams {
         arr[i] = arr[j];
         arr[j] = temp;
     }
+    // ************************************** 2015 83 **************************************
 
     public static int lcs(String s, String t) {
         if (t.length() == 0 || s.length() == 0)
@@ -1096,6 +1099,127 @@ public class OldExams {
             return 1 + lcs(s.substring(1), t.substring(1));
 
         return Math.max(lcs(s.substring(1), t), lcs(s, t.substring(1)));
+    }
+
+    public static void replace(int[] arr) {
+        int max = arr[arr.length - 1];
+        arr[arr.length - 1] = 0;
+        for (int i = arr.length - 2; i > -1; i--) {
+            int temp = arr[i];
+            arr[i] = max;
+            if (temp > max)
+                max = temp;
+        }
+        prinArr(arr);
+    }
+
+    private static int warmForCell(int[][] mat, int row, int col, int last, boolean first, boolean[][] places) {
+        if (row == mat.length || row == -1 || col == -1 || col == mat[0].length || (mat[row][col] < last && !first) ||
+                places[row][col])
+            return -1;
+
+        places[row][col] = true;
+
+        int a = Math.max(
+                1 + warmForCell(mat, row + 1, col, mat[row][col], false, places),
+                1 + warmForCell(mat, row, col + 1, mat[row][col], false, places));
+        int b = Math.max(
+                1 + warmForCell(mat, row - 1, col, mat[row][col], false, places),
+                1 + warmForCell(mat, row, col - 1, mat[row][col], false, places));
+
+        return Math.max(a, b);
+    }
+
+    private static int longestWarm(int[][] mat, int row, int col, int max, boolean[][] places) {
+        if (col == mat[0].length) {
+            col = 0;
+            row++;
+        }
+
+        if (row == mat.length)
+            return max;
+
+        int temp = warmForCell(mat, row, col, 0, true, places);
+
+        if (temp > max)
+            max = temp;
+
+        return longestWarm(mat, row, col + 1, max, places);
+    }
+
+    public static int longestWarm(int[][] mat) {
+        boolean[][] a = new boolean[mat.length][mat[0].length];
+        return longestWarm(mat, 0, 0, 0, a);
+    }
+
+    private static void printPath(int[][] mat, int row, int col, int last, String way, boolean[][] places, boolean isStart) {
+        if (!isStart)
+            if (!isValidPlace(mat, row, col) || last > mat[row][col] || places[row][col])
+                return;
+
+        way += "(" + row + ", " + col + ") ";
+
+        if (isMountain(mat, row, col)) {
+            System.out.println(way);
+            return;
+        }
+
+        places[row][col] = true;
+
+        printPath(mat, row + 1, col, mat[row][col], way, places, false);
+        printPath(mat, row - 1, col, mat[row][col], way, places, false);
+        printPath(mat, row, col + 1, mat[row][col], way, places, false);
+        printPath(mat, row, col - 1, mat[row][col], way, places, false);
+    }
+
+    private static boolean isMountain(int[][] mat, int row, int col) {
+        boolean a = !isValidPlace(mat, row + 1, col) || mat[row][col] > mat[row + 1][col];
+        boolean b = !isValidPlace(mat, row - 1, col) || mat[row][col] > mat[row - 1][col];
+        boolean c = !isValidPlace(mat, row, col + 1) || mat[row][col] > mat[row][col + 1];
+        boolean d = !isValidPlace(mat, row, col - 1) || mat[row][col] > mat[row][col - 1];
+
+        return a && b && c && d;
+    }
+
+    public static void printPath(int[][] mat) {
+        if (isMountain(mat, 0, 0)) {
+            System.out.println("(" + 0 + ", " + 0 + ") ");
+            return;
+        }
+
+        boolean[][] places = new boolean[mat.length][mat[0].length];
+
+        printPath(mat, 0, 0, 0, "", places, true);
+    }
+
+    private static void printAllSum(int[] arr, int sum, String s, int i) {
+        if (i == arr.length) {
+            if (sum == 0) {
+                System.out.println(s);
+            }
+            return;
+        }
+
+        printAllSum(arr, sum - arr[i], s + "1", i + 1);
+        printAllSum(arr, sum, s + "0", i + 1);
+    }
+
+    public static void printAllSum(int[] arr, int sum) {
+        printAllSum(arr, sum, "", 0);
+    }
+
+    public static void printPairs(int[] arr, int k) {
+        int left = 0, right = left + 1;
+        while (right < arr.length) {
+            if (Math.abs(arr[left] - arr[right]) == k) {
+                System.out.println("Pair Found: (" + arr[left] + "," + arr[right] + ")");
+                left++;
+                right++;
+            } else if (Math.abs(arr[right] - arr[left]) < k)
+                right++;
+            else
+                left++;
+        }
     }
 
 }
