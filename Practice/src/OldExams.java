@@ -1240,12 +1240,10 @@ public class OldExams {
             if (num == arr[i] + 1 && isUp == 0) {
                 isUp = 1;
                 cnt++;
-            }
-            else if (num == arr[i] - 1 && isUp == 0) {
+            } else if (num == arr[i] - 1 && isUp == 0) {
                 isUp = -1;
                 cnt++;
-            }
-            else
+            } else
                 return cnt;
         }
 
@@ -1254,6 +1252,33 @@ public class OldExams {
 
     public static int longestFlat(int[] arr) {
         return longestFlat(arr, 0, 0);
+    }
+
+    public static int minAbsSum(int[] arr) {
+        int left = 0, right = arr.length - 1;
+        int minPositive = -1;
+        while (right > left) { // O(log(n))
+            int m = (left + right) / 2;
+
+            if (m == 0 && arr[m] < 0)
+                break;
+
+            if (arr[m] == 0 || m == 0 && arr[m] > 0 || arr[m] > 0 && arr[m - 1] < 0) {
+                minPositive = m;
+                break;
+            }
+
+            if (arr[m] < 0)
+                left = m + 1;
+            else
+                right = m - 1;
+        }
+
+        if (minPositive == -1)
+            return arr[arr.length - 1] * -1 + arr[arr.length - 2] * -1;
+        if (minPositive == 0)
+            return arr[0] + arr[1];
+        return arr[minPositive] + arr[minPositive - 1] * -1;
     }
 }
 
